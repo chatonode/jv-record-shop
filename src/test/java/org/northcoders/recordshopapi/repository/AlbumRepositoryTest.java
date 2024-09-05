@@ -197,6 +197,7 @@ class AlbumRepositoryTest {
         this.initialiseAlbums();
 
 
+        // Saves all nested artists and genres altogether thanks to CascadeType.PERSIST
         albumRepository.saveAll(List.of(
                 goodbyeYellowBrickRoad, heroes, bad, britney, karma, rayOfLight, whenWeAllFallAsleep, futureNostalgia
         ));
@@ -260,6 +261,32 @@ class AlbumRepositoryTest {
         List<Album> expectedAlbums = List.of();
 
         List<Album> actualAlbums = albumRepository.findAllByGenreSet(nonexistentGenreSet);
+
+        assertNotNull(actualAlbums);
+        assertEquals(expectedAlbums.size(), actualAlbums.size());
+        assertTrue(actualAlbums.isEmpty());
+    }
+
+    @Test
+    void findAllByGenreSet_EmptyGenreSet_ReturnsEmptyAlbums() {
+        Set<Genre> emptyGenreSet = Set.of();
+        List<Album> expectedAlbums = List.of();
+
+        List<Album> actualAlbums = albumRepository.findAllByGenreSet(emptyGenreSet);
+
+        assertNotNull(actualAlbums);
+        assertEquals(expectedAlbums.size(), actualAlbums.size());
+    }
+
+    @Test
+    void findAllByGenreSet_EmptyGenreSet_ReturnsEmptyAlbumsWhenNoAlbumsExist() {
+        // Clear out the albums
+        albumRepository.deleteAll();
+        Set<Genre> emptyGenreSet = Set.of();
+
+        List<Album> expectedAlbums = List.of();
+
+        List<Album> actualAlbums = albumRepository.findAllByGenreSet(emptyGenreSet);
 
         assertNotNull(actualAlbums);
         assertEquals(expectedAlbums.size(), actualAlbums.size());

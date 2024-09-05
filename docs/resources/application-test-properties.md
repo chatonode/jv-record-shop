@@ -1,12 +1,14 @@
 ```properties
-# Local - PostgreSQL
+# h2 - Spring Data JPA
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=username
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 
-spring.jpa.database=postgresql
-spring.datasource.driverClassName=org.postgresql.Driver
-spring.datasource.url=jdbc:postgresql://<OUR-DOMAIN-NAME>:<OUR-DOMAIN-PORT>/<OUR-DB-NAME>
-spring.datasource.username=<OUR-USERNAME>
-spring.datasource.password=<OUR-PASSWORD>
-spring.jpa.database-platform=org.hibernate.dialect.PostgresPlusDialect
-spring.jpa.hibernate.ddl-auto=update
+# Additional
 spring.jpa.show-sql=true
+spring.jpa.hibernate.ddl-auto=update
+spring.h2.console.enabled=true
+spring.h2.console.path=/h2-console
 ```
