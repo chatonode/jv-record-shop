@@ -1,16 +1,18 @@
 package org.northcoders.recordshopapi.repository;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.northcoders.recordshopapi.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import java.util.List;
-import java.util.Set;
+import org.northcoders.recordshopapi.model.*;
+
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @DataJpaTest
 class AlbumRepositoryTest {
@@ -18,13 +20,40 @@ class AlbumRepositoryTest {
     @Autowired
     private AlbumRepository albumRepository;
 
+    @Autowired
+    private GenreRepository genreRepository;
+
+    private Genre rock, pop, dancePop, jazz, electronic, funk, world;
+
     private Artist eltonJohn, davidBowie, michaelJackson, britneySpears, tarkan, madonna, billieEilish, duaLipa;
 
     private Album goodbyeYellowBrickRoad, heroes, bad, britney, karma, rayOfLight, whenWeAllFallAsleep, futureNostalgia;
 
+    void initialiseGenres() {
+        rock = Genre.builder()
+                .name(GenreType.ROCK)
+                .build();
+        pop = Genre.builder()
+                .name(GenreType.POP)
+                .build();
+        dancePop = Genre.builder()
+                .name(GenreType.DANCE_POP)
+                .build();
+        jazz = Genre.builder()
+                .name(GenreType.JAZZ)
+                .build();
+        electronic = Genre.builder()
+                .name(GenreType.ELECTRONIC)
+                .build();
+        funk = Genre.builder()
+                .name(GenreType.FUNK)
+                .build();
+        world = Genre.builder()
+                .name(GenreType.WORLD)
+                .build();
+    }
+
     void initialiseArtists() {
-
-
         eltonJohn = Artist.builder()
                 .fullName("Elton John")
                 .albums(List.of())
@@ -66,7 +95,7 @@ class AlbumRepositoryTest {
         goodbyeYellowBrickRoad = Album.builder()
                 .title("Goodbye Yellow Brick Road")
                 .artists(List.of(eltonJohn))
-                .genres(List.of(new Genre(GenreType.ROCK), new Genre(GenreType.POP)))
+                .genres(List.of(rock, pop))
                 .durationInSeconds(4000) // Approx. 66 minutes
                 .releaseYear(1973)
                 .format(Format.CD)
@@ -78,7 +107,7 @@ class AlbumRepositoryTest {
         heroes = Album.builder()
                 .title("Heroes")
                 .artists(List.of(davidBowie))
-                .genres(List.of(new Genre(GenreType.ROCK), new Genre(GenreType.ELECTRONIC)))
+                .genres(List.of(rock, electronic))
                 .durationInSeconds(2600) // Approx. 43 minutes
                 .releaseYear(1977)
                 .format(Format.Vinyl)
@@ -90,7 +119,7 @@ class AlbumRepositoryTest {
         bad = Album.builder()
                 .title("Bad")
                 .artists(List.of(michaelJackson))
-                .genres(List.of(new Genre(GenreType.POP), new Genre(GenreType.FUNK)))
+                .genres(List.of(pop, funk))
                 .durationInSeconds(3200) // Approx. 53 minutes
                 .releaseYear(1987)
                 .format(Format.CD)
@@ -102,7 +131,7 @@ class AlbumRepositoryTest {
         britney = Album.builder()
                 .title("Britney")
                 .artists(List.of(britneySpears))
-                .genres(List.of(new Genre(GenreType.POP)))
+                .genres(List.of(pop))
                 .durationInSeconds(2600) // Approx. 43 minutes
                 .releaseYear(2001)
                 .format(Format.Cassette)
@@ -114,7 +143,7 @@ class AlbumRepositoryTest {
         karma = Album.builder()
                 .title("Karma")
                 .artists(List.of(tarkan))
-                .genres(List.of(new Genre(GenreType.POP), new Genre(GenreType.WORLD)))
+                .genres(List.of(pop, world))
                 .durationInSeconds(3100) // Approx. 51 minutes
                 .releaseYear(2001)
                 .format(Format.Vinyl)
@@ -126,7 +155,7 @@ class AlbumRepositoryTest {
         rayOfLight = Album.builder()
                 .title("Ray of Light")
                 .artists(List.of(madonna))
-                .genres(List.of(new Genre(GenreType.POP), new Genre(GenreType.ELECTRONIC)))
+                .genres(List.of(pop, electronic))
                 .durationInSeconds(3200) // Approx. 53 minutes
                 .releaseYear(1998)
                 .format(Format.CD)
@@ -138,7 +167,7 @@ class AlbumRepositoryTest {
         whenWeAllFallAsleep = Album.builder()
                 .title("When We All Fall Asleep, Where Do We Go?")
                 .artists(List.of(billieEilish))
-                .genres(List.of(new Genre(GenreType.POP)))
+                .genres(List.of(pop))
                 .durationInSeconds(2600) // Approx. 43 minutes
                 .releaseYear(2019)
                 .format(Format.Vinyl)
@@ -150,7 +179,7 @@ class AlbumRepositoryTest {
         futureNostalgia = Album.builder()
                 .title("Future Nostalgia")
                 .artists(List.of(duaLipa))
-                .genres(List.of(new Genre(GenreType.POP), new Genre(GenreType.DANCE_POP)))
+                .genres(List.of(pop, dancePop))
                 .durationInSeconds(2300) // Approx. 38 minutes
                 .releaseYear(2020)
                 .format(Format.CD)
@@ -163,8 +192,10 @@ class AlbumRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        this.initialiseGenres();
         this.initialiseArtists();
         this.initialiseAlbums();
+
 
         albumRepository.saveAll(List.of(
                 goodbyeYellowBrickRoad, heroes, bad, britney, karma, rayOfLight, whenWeAllFallAsleep, futureNostalgia
@@ -194,32 +225,70 @@ class AlbumRepositoryTest {
 
     @Test
     void findByTitle_ReturnAlbum() {
-        assertNotNull(null);
+        Album expectedAlbum = goodbyeYellowBrickRoad;
+        Optional<Album> actualAlbum = albumRepository.findByTitle("Goodbye Yellow Brick Road");
+        assertFalse(actualAlbum.isEmpty());
+        assertEquals(expectedAlbum, actualAlbum.get());
     }
 
     @Test
     void findByTitle_ReturnNullAlbum() {
-        assertNotNull(null);
+        Optional<Album> actualAlbum = albumRepository.findByTitle("Nonexistent Album");
+        assertTrue(actualAlbum.isEmpty());
     }
 
     @Test
     void findAllByGenreSet_ReturnsAlbums() {
-        assertNotNull(null);
+        Set<Genre> popGenreSet = Set.of(pop);
+        List<Album> expectedAlbums = List.of(britney, karma, whenWeAllFallAsleep, rayOfLight, futureNostalgia, bad, goodbyeYellowBrickRoad);
+
+        List<Album> actualAlbums = albumRepository.findAllByGenreSet(popGenreSet);
+
+        assertNotNull(actualAlbums);
+        assertEquals(expectedAlbums.size(), actualAlbums.size());
+        assertTrue(actualAlbums.containsAll(expectedAlbums));
     }
 
     @Test
     void findAllByGenreSet_ReturnsEmptyAlbums() {
-        assertNotNull(null);
+        Set<Genre> nonexistentGenreSet = Set.of(jazz);
+        // since it is not saved within an album
+        //   CascadeType.PERSIST or any other CascadeType won't work.
+        //   So, we need to save it manually before actually searching with it.
+        genreRepository.save(jazz);
+
+        List<Album> expectedAlbums = List.of();
+
+        List<Album> actualAlbums = albumRepository.findAllByGenreSet(nonexistentGenreSet);
+
+        assertNotNull(actualAlbums);
+        assertEquals(expectedAlbums.size(), actualAlbums.size());
+        assertTrue(actualAlbums.isEmpty());
     }
 
     @Test
     void findAllByFormat_ReturnsAlbums() {
-        assertNotNull(null);
+        Format cdFormat = Format.CD;
+        List<Album> expectedAlbums = List.of(goodbyeYellowBrickRoad, bad, rayOfLight, futureNostalgia);
+
+        List<Album> actualAlbums = albumRepository.findAllByFormat(cdFormat);
+
+        assertNotNull(actualAlbums);
+        assertEquals(expectedAlbums.size(), actualAlbums.size());
+        assertTrue(actualAlbums.containsAll(expectedAlbums));
     }
 
     @Test
     void findAllByFormat_ReturnsEmptyAlbums() {
-        assertNotNull(null);
+        Format nonexistentFormat = Format.DVD;
+        List<Album> expectedAlbums = List.of();
+
+        List<Album> actualAlbums = albumRepository.findAllByFormat(nonexistentFormat);
+
+        assertNotNull(actualAlbums);
+        assertEquals(expectedAlbums.size(), actualAlbums.size());
+        assertTrue(actualAlbums.isEmpty());
     }
+
 
 }
