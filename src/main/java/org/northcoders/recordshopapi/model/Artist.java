@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 @Entity
 @Data
+@Getter
+@Setter
 @RequiredArgsConstructor
 public class Artist {
     @Id
@@ -18,20 +20,16 @@ public class Artist {
     @Column(updatable = false, nullable = false)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private String fullName;
 
-    @Column
+    @Column(nullable = false)
     @ManyToMany(mappedBy = "artistSet")
     private Set<Album> albumSet;
 
-    @Column
-    private Set<Genre> genreSet;
-
     @Builder
-    public Artist(String fullName, List<Album> albums, List<Genre> genres) {
+    public Artist(String fullName, List<Album> albums) {
         this.fullName = fullName;
         this.albumSet = new HashSet<>(albums);
-        this.genreSet = new HashSet<>(genres);
     }
 }
