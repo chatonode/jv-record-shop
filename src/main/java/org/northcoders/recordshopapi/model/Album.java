@@ -7,6 +7,7 @@ import lombok.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Data
@@ -23,7 +24,7 @@ public class Album {
     @Column(nullable = false)
     private String title;
 
-    @Column
+    @Column(nullable = false)
     @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(
             name = "albums_artists",
@@ -32,13 +33,18 @@ public class Album {
     private Set<Artist> artistSet;
 
     @Column(nullable = false)
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "albums_genres",
+            joinColumns = @JoinColumn(name = "album_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id"))
     private Set<Genre> genreSet;
 
     @Column(nullable = false)
     private Integer durationInSeconds; // 1:27 => 87
 
     @Column
-    private Integer releaseDate;
+    private Integer releaseYear;
 
     @Column
     private String publisher;
@@ -52,15 +58,19 @@ public class Album {
     @Column(nullable = false)
     private Integer quantityInStock;
 
+    @Column(nullable = false)
+    private Format format;
+
     @Builder
-    public Album(String title, List<Artist> artists, List<Genre> genres, Integer durationInSeconds, Integer releaseDate, String publisher, Integer priceInPences, Currency currency) {
+    public Album(String title, List<Artist> artists, List<Genre> genres, Integer durationInSeconds, Integer releaseYear, String publisher, Format format, Integer priceInPences, Currency currency) {
         this.title = title;
         this.artistSet = new HashSet<>(artists);
         this.genreSet = new HashSet<>(genres);
         this.durationInSeconds = durationInSeconds;
-        this.releaseDate = releaseDate;
+        this.releaseYear = releaseYear;
         this.publisher = publisher;
 
+        this.format = format;
         this.quantityInStock = 0;
         this.priceInPences = priceInPences;
         this.currency = currency;
