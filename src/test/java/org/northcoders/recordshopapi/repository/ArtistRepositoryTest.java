@@ -48,7 +48,7 @@ class ArtistRepositoryTest {
     }
 
     @Test
-    void findAllByFullName_ReturnsArtist() {
+    void findAllByFullName_ShouldReturnArtist_WhenArtistExists() {
         List<Artist> actualArtists = artistRepository.findAllByFullName("Elton John");
         assertNotNull(actualArtists);
         assertEquals(1, actualArtists.size());
@@ -56,7 +56,7 @@ class ArtistRepositoryTest {
     }
 
     @Test
-    void findAllByFullName_ReturnsMultipleArtists() {
+    void findAllByFullName_ShouldReturnMultipleArtists_WhenMultipleArtistsExist() {
         // Create a duplicate artist for testing multiple results
         Artist anotherMadonna = Artist.builder()
                 .fullName("Madonna")
@@ -72,7 +72,7 @@ class ArtistRepositoryTest {
     }
 
     @Test
-    void findAllByFullName_ReturnsEmptyList() {
+    void findAllByFullName_ShouldReturnEmptyList_WhenNoArtistExists() {
         List<Artist> actualArtists = artistRepository.findAllByFullName("Nonexistent Artist");
         assertNotNull(actualArtists);
         assertTrue(actualArtists.isEmpty());

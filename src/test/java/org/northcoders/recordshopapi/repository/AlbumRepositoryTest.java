@@ -212,7 +212,7 @@ class AlbumRepositoryTest {
     }
 
     @Test
-    void findAllByReleaseYear_ReturnsAlbums() {
+    void findAllByReleaseYear_ShouldReturnAlbums_WhenAlbumsExistForGivenYear() {
         List<Album> expectedAlbumsFrom2001 = List.of(britney, karma);
 
         List<Album> actualAlbumsFrom2001 = albumRepository.findAllByReleaseYear(2001);
@@ -223,7 +223,7 @@ class AlbumRepositoryTest {
     }
 
     @Test
-    void findAllByReleaseYear_ReturnsEmptyAlbums() {
+    void findAllByReleaseYear_ShouldReturnEmptyAlbums_WhenNoAlbumsExistForGivenYear() {
         List<Album> expectedAlbumsFrom1975 = List.of();
 
         List<Album> actualAlbumsFrom1975 = albumRepository.findAllByReleaseYear(1975);
@@ -233,7 +233,7 @@ class AlbumRepositoryTest {
     }
 
     @Test
-    void findByTitle_ReturnAlbum() {
+    void findByTitle_ShouldReturnAlbum_WhenAlbumExists() {
         Album expectedAlbum = goodbyeYellowBrickRoad;
         Optional<Album> actualAlbum = albumRepository.findByTitle("Goodbye Yellow Brick Road");
         assertFalse(actualAlbum.isEmpty());
@@ -241,13 +241,13 @@ class AlbumRepositoryTest {
     }
 
     @Test
-    void findByTitle_ReturnNullAlbum() {
+    void findByTitle_ShouldReturnNullAlbum_WhenAlbumDoesNotExist() {
         Optional<Album> actualAlbum = albumRepository.findByTitle("Nonexistent Album");
         assertTrue(actualAlbum.isEmpty());
     }
 
     @Test
-    void findAllByGenreSet_ReturnsAlbums() {
+    void findAllByGenreSet_ShouldReturnAlbums_WhenAlbumsExistForGivenGenres() {
         Set<Genre> popGenreSet = Set.of(pop);
         List<Album> expectedAlbums = List.of(britney, karma, whenWeAllFallAsleep, rayOfLight, futureNostalgia, bad, goodbyeYellowBrickRoad);
 
@@ -259,7 +259,7 @@ class AlbumRepositoryTest {
     }
 
     @Test
-    void findAllByGenreSet_ReturnsEmptyAlbums() {
+    void findAllByGenreSet_ShouldReturnEmptyAlbums_WhenNoAlbumsExistForGivenGenres() {
         Set<Genre> nonexistentGenreSet = Set.of(jazz);
         // since it is not saved within an album
         //   CascadeType.PERSIST or any other CascadeType won't work.
@@ -276,7 +276,7 @@ class AlbumRepositoryTest {
     }
 
     @Test
-    void findAllByGenreSet_EmptyGenreSet_ReturnsEmptyAlbums() {
+    void findAllByGenreSet_ShouldReturnEmptyAlbums_WhenGenreSetIsEmpty() {
         Set<Genre> emptyGenreSet = Set.of();
         List<Album> expectedAlbums = List.of();
 
@@ -287,7 +287,7 @@ class AlbumRepositoryTest {
     }
 
     @Test
-    void findAllByGenreSet_EmptyGenreSet_ReturnsEmptyAlbumsWhenNoAlbumsExist() {
+    void findAllByGenreSet_ShouldReturnEmptyAlbums_WhenNoAlbumsExistAndGenreSetIsEmpty() {
         // Clear out the albums
         albumRepository.deleteAll();
         Set<Genre> emptyGenreSet = Set.of();
@@ -302,7 +302,7 @@ class AlbumRepositoryTest {
     }
 
     @Test
-    void findAllByFormat_ReturnsAlbums() {
+    void findAllByFormat_ShouldReturnAlbums_WhenAlbumsExistForGivenFormat() {
         Format cdFormat = Format.CD;
         List<Album> expectedAlbums = List.of(goodbyeYellowBrickRoad, bad, rayOfLight, futureNostalgia);
 
@@ -314,7 +314,7 @@ class AlbumRepositoryTest {
     }
 
     @Test
-    void findAllByFormat_ReturnsEmptyAlbums() {
+    void findAllByFormat_ShouldReturnEmptyAlbums_WhenNoAlbumsExistForGivenFormat() {
         Format nonexistentFormat = Format.DVD;
         List<Album> expectedAlbums = List.of();
 
@@ -324,6 +324,5 @@ class AlbumRepositoryTest {
         assertEquals(expectedAlbums.size(), actualAlbums.size());
         assertTrue(actualAlbums.isEmpty());
     }
-
 
 }
