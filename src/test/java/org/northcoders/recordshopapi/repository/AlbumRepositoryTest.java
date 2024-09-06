@@ -233,17 +233,25 @@ class AlbumRepositoryTest {
     }
 
     @Test
-    void findByTitle_ShouldReturnAlbum_WhenAlbumExists() {
-        Album expectedAlbum = goodbyeYellowBrickRoad;
-        Optional<Album> actualAlbum = albumRepository.findByTitle("Goodbye Yellow Brick Road");
-        assertFalse(actualAlbum.isEmpty());
-        assertEquals(expectedAlbum, actualAlbum.get());
+    void findAllByTitle_ShouldReturnAlbums_WhenAlbumExists() {
+        List<Album> expectedAlbums = List.of(goodbyeYellowBrickRoad);
+
+
+        List<Album> actualAlbums = albumRepository.findAllByTitle("Goodbye Yellow Brick Road");
+
+        assertNotNull(expectedAlbums);
+        assertEquals(expectedAlbums.size(), actualAlbums.size());
+        assertEquals(expectedAlbums, actualAlbums);
     }
 
     @Test
-    void findByTitle_ShouldReturnNullAlbum_WhenAlbumDoesNotExist() {
-        Optional<Album> actualAlbum = albumRepository.findByTitle("Nonexistent Album");
-        assertTrue(actualAlbum.isEmpty());
+    void findAllByTitle_ShouldReturnEmptyAlbums_WhenAlbumDoesNotExist() {
+        List<Album> expectedAlbums = List.of();
+
+        List<Album> actualAlbums = albumRepository.findAllByTitle("Nonexistent Album");
+        assertNotNull(actualAlbums);
+        assertEquals(expectedAlbums.size(), actualAlbums.size());
+        assertEquals(expectedAlbums, actualAlbums);
     }
 
     @Test

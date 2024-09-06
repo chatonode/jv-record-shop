@@ -16,7 +16,7 @@ public interface AlbumRepository extends CrudRepository<Album, Long> {
     //    List<Album> findAll();
     List<Album> findAllByReleaseYear(Integer releaseYear);
 
-    Optional<Album> findByTitle(String title);
+    List<Album> findAllByTitle(String title);
 
     List<Album> findAllByGenreSet(Set<Genre> genreSet);
 

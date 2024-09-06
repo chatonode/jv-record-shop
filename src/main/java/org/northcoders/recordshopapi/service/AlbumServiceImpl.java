@@ -34,8 +34,8 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public Album getAlbumByTitle(String title) {
-        return albumRepository.findByTitle(title).orElseThrow(() -> new NotFoundException(Album.class));
+    public List<Album> getAlbumsByTitle(String title) {
+        return albumRepository.findAllByTitle(title);
     }
 
     @Override

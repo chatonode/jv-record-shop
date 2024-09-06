@@ -1,7 +1,6 @@
 package org.northcoders.recordshopapi.service;
 
 import org.northcoders.recordshopapi.model.*;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -11,7 +10,7 @@ public interface AlbumService {
 
     List<Album> getAlbumsByReleaseYear(Integer releaseYear);
 
-    Album getAlbumByTitle(String title); // OR NotFoundException
+    List<Album> getAlbumsByTitle(String title); // OR NotFoundException
 
     List<Album> getAlbumsByGenre(GenreType genre);
 
