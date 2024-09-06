@@ -1,21 +1,21 @@
 package org.northcoders.recordshopapi.service;
 
+import java.util.*;
+
+import org.northcoders.recordshopapi.model.Currency;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.northcoders.recordshopapi.exception.service.InvalidParameterException;
-import org.northcoders.recordshopapi.exception.service.NotFoundException;
-import org.northcoders.recordshopapi.model.*;
-import org.northcoders.recordshopapi.model.Currency;
-import org.northcoders.recordshopapi.repository.AlbumRepository;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
+import org.northcoders.recordshopapi.exception.service.InvalidParameterException;
+import org.northcoders.recordshopapi.exception.service.NotFoundException;
+import org.northcoders.recordshopapi.model.*;
+import org.northcoders.recordshopapi.repository.AlbumRepository;
 
 @DataJpaTest
 class AlbumServiceImplTest {
@@ -198,17 +198,7 @@ class AlbumServiceImplTest {
         this.initialiseGenres();
         this.initialiseArtists();
         this.initialiseAlbums();
-//        MockitoAnnotations.openMocks(this);
     }
-
-    private void initializeGenres() {
-        rock = new Genre(GenreType.ROCK);
-        pop = new Genre(GenreType.POP);
-        electronic = new Genre(GenreType.ELECTRONIC);
-        funk = new Genre(GenreType.FUNK);
-        world = new Genre(GenreType.WORLD);
-    }
-
 
     @Test
     void createAlbum_ShouldReturnSavedAlbum_WhenIdIsNull() {
