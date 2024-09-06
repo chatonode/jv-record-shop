@@ -97,6 +97,7 @@ class AlbumRepositoryTest {
                 .artists(List.of(eltonJohn))
                 .genres(List.of(rock, pop))
                 .durationInSeconds(4000) // Approx. 66 minutes
+                .imageUrl("https://upload.wikimedia.org/wikipedia/en/8/86/Elton_John_-_Goodbye_Yellow_Brick_Road.jpg")
                 .releaseYear(1973)
                 .format(Format.CD)
                 .publisher("DJM Records")
@@ -109,6 +110,7 @@ class AlbumRepositoryTest {
                 .artists(List.of(davidBowie))
                 .genres(List.of(rock, electronic))
                 .durationInSeconds(2600) // Approx. 43 minutes
+                .imageUrl("https://upload.wikimedia.org/wikipedia/en/7/7b/David_Bowie_-_Heroes.png")
                 .releaseYear(1977)
                 .format(Format.Vinyl)
                 .publisher("RCA Records")
@@ -121,6 +123,7 @@ class AlbumRepositoryTest {
                 .artists(List.of(michaelJackson))
                 .genres(List.of(pop, funk))
                 .durationInSeconds(3200) // Approx. 53 minutes
+                .imageUrl("https://upload.wikimedia.org/wikipedia/en/5/51/Michael_Jackson_-_Bad.png")
                 .releaseYear(1987)
                 .format(Format.CD)
                 .publisher("Epic Records")
@@ -133,6 +136,7 @@ class AlbumRepositoryTest {
                 .artists(List.of(britneySpears))
                 .genres(List.of(pop))
                 .durationInSeconds(2600) // Approx. 43 minutes
+                .imageUrl("https://upload.wikimedia.org/wikipedia/en/0/0c/Britney_Spears_-_Britney.png")
                 .releaseYear(2001)
                 .format(Format.Cassette)
                 .publisher("Jive Records")
@@ -145,6 +149,7 @@ class AlbumRepositoryTest {
                 .artists(List.of(tarkan))
                 .genres(List.of(pop, world))
                 .durationInSeconds(3100) // Approx. 51 minutes
+                .imageUrl("https://upload.wikimedia.org/wikipedia/en/1/11/Tarkan_-_Karma_%28Tarkan_album%29.jpg")
                 .releaseYear(2001)
                 .format(Format.Vinyl)
                 .publisher("Universal Music Turkey")
@@ -157,6 +162,7 @@ class AlbumRepositoryTest {
                 .artists(List.of(madonna))
                 .genres(List.of(pop, electronic))
                 .durationInSeconds(3200) // Approx. 53 minutes
+                .imageUrl("https://upload.wikimedia.org/wikipedia/en/d/dd/Ray_of_Light_Madonna.png")
                 .releaseYear(1998)
                 .format(Format.CD)
                 .publisher("Warner Bros. Records")
@@ -169,6 +175,7 @@ class AlbumRepositoryTest {
                 .artists(List.of(billieEilish))
                 .genres(List.of(pop))
                 .durationInSeconds(2600) // Approx. 43 minutes
+                .imageUrl("https://upload.wikimedia.org/wikipedia/en/3/38/When_We_All_Fall_Asleep%2C_Where_Do_We_Go%3F.png")
                 .releaseYear(2019)
                 .format(Format.Vinyl)
                 .publisher("Interscope Records")
@@ -181,6 +188,7 @@ class AlbumRepositoryTest {
                 .artists(List.of(duaLipa))
                 .genres(List.of(pop, dancePop))
                 .durationInSeconds(2300) // Approx. 38 minutes
+                .imageUrl("https://upload.wikimedia.org/wikipedia/en/f/f5/Dua_Lipa_-_Future_Nostalgia_%28Official_Album_Cover%29.png")
                 .releaseYear(2020)
                 .format(Format.CD)
                 .publisher("Warner Records")
