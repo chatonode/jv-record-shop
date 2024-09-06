@@ -44,6 +44,9 @@ public class Album {
     private Integer durationInSeconds; // 1:27 => 87
 
     @Column
+    private String imageUrl;
+
+    @Column
     private Integer releaseYear;
 
     @Column
@@ -62,11 +65,12 @@ public class Album {
     private Format format;
 
     @Builder
-    public Album(String title, List<Artist> artists, List<Genre> genres, Integer durationInSeconds, Integer releaseYear, String publisher, Format format, Integer priceInPences, Currency currency) {
+    public Album(String title, List<Artist> artists, List<Genre> genres, Integer durationInSeconds, String imageUrl, Integer releaseYear, String publisher, Format format, Integer priceInPences, Currency currency) {
         this.title = title;
         this.artistSet = new HashSet<>(artists);
         this.genreSet = new HashSet<>(genres);
         this.durationInSeconds = durationInSeconds;
+        this.imageUrl = imageUrl;
         this.releaseYear = releaseYear;
         this.publisher = publisher;
 

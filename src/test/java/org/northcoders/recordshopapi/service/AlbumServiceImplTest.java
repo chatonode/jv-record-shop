@@ -1,27 +1,30 @@
-package org.northcoders.recordshopapi.repository;
+package org.northcoders.recordshopapi.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
+import org.northcoders.recordshopapi.model.Currency;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import org.northcoders.recordshopapi.model.*;
-
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import org.northcoders.recordshopapi.exception.service.InvalidParameterException;
+import org.northcoders.recordshopapi.exception.service.NotFoundException;
+import org.northcoders.recordshopapi.model.*;
+import org.northcoders.recordshopapi.repository.AlbumRepository;
 
 @DataJpaTest
-class AlbumRepositoryTest {
+class AlbumServiceImplTest {
 
-    @Autowired
+    @Mock
     private AlbumRepository albumRepository;
 
-    @Autowired
-    private GenreRepository genreRepository;
+    @InjectMocks
+    private AlbumServiceImpl albumService;
 
     private Genre rock, pop, dancePop, jazz, electronic, funk, world;
 
@@ -203,126 +206,148 @@ class AlbumRepositoryTest {
         this.initialiseGenres();
         this.initialiseArtists();
         this.initialiseAlbums();
-
-
-        // Saves all nested artists and genres altogether thanks to CascadeType.PERSIST
-        albumRepository.saveAll(List.of(
-                goodbyeYellowBrickRoad, heroes, bad, britney, karma, rayOfLight, whenWeAllFallAsleep, futureNostalgia
-        ));
     }
 
     @Test
-    void findAllByReleaseYear_ShouldReturnAlbums_WhenAlbumsExistForGivenYear() {
-        List<Album> expectedAlbumsFrom2001 = List.of(britney, karma);
+    void createAlbum_ShouldReturnSavedAlbum_WhenIdIsNull() {
+        when(albumRepository.save(goodbyeYellowBrickRoad)).thenReturn(goodbyeYellowBrickRoad);
 
-        List<Album> actualAlbumsFrom2001 = albumRepository.findAllByReleaseYear(2001);
+        Album savedAlbum = albumService.createAlbum(goodbyeYellowBrickRoad);
 
-        assertNotNull(actualAlbumsFrom2001);
-        assertEquals(expectedAlbumsFrom2001.size(), actualAlbumsFrom2001.size());
-        assertEquals(expectedAlbumsFrom2001, actualAlbumsFrom2001);
+        assertNotNull(savedAlbum);
+        assertEquals(goodbyeYellowBrickRoad, savedAlbum);
+        verify(albumRepository).save(goodbyeYellowBrickRoad);
     }
 
     @Test
-    void findAllByReleaseYear_ShouldReturnEmptyAlbums_WhenNoAlbumsExistForGivenYear() {
-        List<Album> expectedAlbumsFrom1975 = List.of();
+    void createAlbum_ShouldThrowInvalidParameterException_WhenIdIsNotNull() {
+        goodbyeYellowBrickRoad.setId(1L);
 
-        List<Album> actualAlbumsFrom1975 = albumRepository.findAllByReleaseYear(1975);
-        assertNotNull(actualAlbumsFrom1975);
-        assertEquals(expectedAlbumsFrom1975.size(), actualAlbumsFrom1975.size());
-        assertEquals(expectedAlbumsFrom1975, actualAlbumsFrom1975);
+        InvalidParameterException thrown = assertThrows(InvalidParameterException.class, () -> albumService.createAlbum(goodbyeYellowBrickRoad));
+
+        assertEquals("Invalid parameter '%s' provided for entity '%s'.".formatted("id", Album.class.getSimpleName()), thrown.getMessage());
     }
 
     @Test
-    void findByTitle_ShouldReturnAlbum_WhenAlbumExists() {
-        Album expectedAlbum = goodbyeYellowBrickRoad;
-        Optional<Album> actualAlbum = albumRepository.findByTitle("Goodbye Yellow Brick Road");
-        assertFalse(actualAlbum.isEmpty());
-        assertEquals(expectedAlbum, actualAlbum.get());
+    void getAlbumByTitle_ShouldReturnAlbum_WhenAlbumExists() {
+        when(albumRepository.findByTitle("Goodbye Yellow Brick Road")).thenReturn(Optional.of(goodbyeYellowBrickRoad));
+
+        Album foundAlbum = albumService.getAlbumByTitle("Goodbye Yellow Brick Road");
+
+        assertNotNull(foundAlbum);
+        assertEquals(goodbyeYellowBrickRoad, foundAlbum);
     }
 
     @Test
-    void findByTitle_ShouldReturnNullAlbum_WhenAlbumDoesNotExist() {
-        Optional<Album> actualAlbum = albumRepository.findByTitle("Nonexistent Album");
-        assertTrue(actualAlbum.isEmpty());
+    void getAlbumByTitle_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
+        when(albumRepository.findByTitle("Nonexistent Album")).thenReturn(Optional.empty());
+
+        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.getAlbumByTitle("Nonexistent Album"));
+
+        assertEquals("Entity '%s' not found.".formatted(Album.class.getSimpleName()), thrown.getMessage());
     }
 
     @Test
-    void findAllByGenreSet_ShouldReturnAlbums_WhenAlbumsExistForGivenGenres() {
-        Set<Genre> popGenreSet = Set.of(pop);
-        List<Album> expectedAlbums = List.of(britney, karma, whenWeAllFallAsleep, rayOfLight, futureNostalgia, bad, goodbyeYellowBrickRoad);
+    void getAlbumById_ShouldReturnAlbum_WhenAlbumExists() {
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(goodbyeYellowBrickRoad));
 
-        List<Album> actualAlbums = albumRepository.findAllByGenreSet(popGenreSet);
+        Album foundAlbum = albumService.getAlbumById(1L);
 
-        assertNotNull(actualAlbums);
-        assertEquals(expectedAlbums.size(), actualAlbums.size());
-        assertTrue(actualAlbums.containsAll(expectedAlbums));
+        assertNotNull(foundAlbum);
+        assertEquals(goodbyeYellowBrickRoad, foundAlbum);
     }
 
     @Test
-    void findAllByGenreSet_ShouldReturnEmptyAlbums_WhenNoAlbumsExistForGivenGenres() {
-        Set<Genre> nonexistentGenreSet = Set.of(jazz);
-        // since it is not saved within an album
-        //   CascadeType.PERSIST or any other CascadeType won't work.
-        //   So, we need to save it manually before actually searching with it.
-        genreRepository.save(jazz);
+    void getAlbumById_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
+        when(albumRepository.findById(1L)).thenReturn(Optional.empty());
 
-        List<Album> expectedAlbums = List.of();
+        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.getAlbumById(1L));
 
-        List<Album> actualAlbums = albumRepository.findAllByGenreSet(nonexistentGenreSet);
-
-        assertNotNull(actualAlbums);
-        assertEquals(expectedAlbums.size(), actualAlbums.size());
-        assertTrue(actualAlbums.isEmpty());
+        assertEquals("Entity '%s' not found.".formatted(Album.class.getSimpleName()), thrown.getMessage());
     }
 
     @Test
-    void findAllByGenreSet_ShouldReturnEmptyAlbums_WhenGenreSetIsEmpty() {
-        Set<Genre> emptyGenreSet = Set.of();
-        List<Album> expectedAlbums = List.of();
+    void replaceAlbum_ShouldReturnUpdatedAlbum_WhenAlbumExists() {
+        Album updatedAlbum = goodbyeYellowBrickRoad;
+        updatedAlbum.setTitle("Updated Title");
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(goodbyeYellowBrickRoad));
+        when(albumRepository.save(updatedAlbum)).thenReturn(updatedAlbum);
 
-        List<Album> actualAlbums = albumRepository.findAllByGenreSet(emptyGenreSet);
+        Album resultAlbum = albumService.replaceAlbum(1L, updatedAlbum);
 
-        assertNotNull(actualAlbums);
-        assertEquals(expectedAlbums.size(), actualAlbums.size());
+        assertNotNull(resultAlbum);
+        assertEquals("Updated Title", resultAlbum.getTitle());
+        verify(albumRepository).save(updatedAlbum);
     }
 
     @Test
-    void findAllByGenreSet_ShouldReturnEmptyAlbums_WhenNoAlbumsExistAndGenreSetIsEmpty() {
-        // Clear out the albums
-        albumRepository.deleteAll();
-        Set<Genre> emptyGenreSet = Set.of();
+    void replaceAlbum_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
+        when(albumRepository.findById(1L)).thenReturn(Optional.empty());
 
-        List<Album> expectedAlbums = List.of();
+        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.replaceAlbum(1L, goodbyeYellowBrickRoad));
 
-        List<Album> actualAlbums = albumRepository.findAllByGenreSet(emptyGenreSet);
-
-        assertNotNull(actualAlbums);
-        assertEquals(expectedAlbums.size(), actualAlbums.size());
-        assertTrue(actualAlbums.isEmpty());
+        assertEquals("Entity '%s' not found.".formatted(Album.class.getSimpleName()), thrown.getMessage());
     }
 
     @Test
-    void findAllByFormat_ShouldReturnAlbums_WhenAlbumsExistForGivenFormat() {
-        Format cdFormat = Format.CD;
-        List<Album> expectedAlbums = List.of(goodbyeYellowBrickRoad, bad, rayOfLight, futureNostalgia);
+    void deleteAlbumById_ShouldDeleteAlbum_WhenAlbumExists() {
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(goodbyeYellowBrickRoad));
 
-        List<Album> actualAlbums = albumRepository.findAllByFormat(cdFormat);
+        albumService.deleteAlbumById(1L);
 
-        assertNotNull(actualAlbums);
-        assertEquals(expectedAlbums.size(), actualAlbums.size());
-        assertTrue(actualAlbums.containsAll(expectedAlbums));
+        verify(albumRepository).deleteById(1L);
     }
 
     @Test
-    void findAllByFormat_ShouldReturnEmptyAlbums_WhenNoAlbumsExistForGivenFormat() {
-        Format nonexistentFormat = Format.DVD;
-        List<Album> expectedAlbums = List.of();
+    void deleteAlbumById_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
+        when(albumRepository.findById(1L)).thenReturn(Optional.empty());
 
-        List<Album> actualAlbums = albumRepository.findAllByFormat(nonexistentFormat);
+        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.deleteAlbumById(1L));
 
-        assertNotNull(actualAlbums);
-        assertEquals(expectedAlbums.size(), actualAlbums.size());
-        assertTrue(actualAlbums.isEmpty());
+        assertEquals("Entity '%s' not found.".formatted(Album.class.getSimpleName()), thrown.getMessage());
     }
 
+    @Test
+    void getAllAlbums_ShouldReturnListOfAlbums() {
+        when(albumRepository.findAll()).thenReturn(List.of(goodbyeYellowBrickRoad, heroes, bad, britney, karma, rayOfLight, whenWeAllFallAsleep, futureNostalgia));
+
+        List<Album> albums = albumService.getAllAlbums();
+
+        assertNotNull(albums);
+        assertEquals(8, albums.size());
+    }
+
+    @Test
+    void getAlbumsByReleaseYear_ShouldReturnListOfAlbums() {
+        when(albumRepository.findAllByReleaseYear(2001)).thenReturn(List.of(britney, karma));
+
+        List<Album> albums = albumService.getAlbumsByReleaseYear(2001);
+
+        assertNotNull(albums);
+        assertEquals(2, albums.size());
+        assertTrue(albums.containsAll(List.of(britney, karma)));
+    }
+
+    @Test
+    void getAlbumsByGenre_ShouldReturnListOfAlbums() {
+        Set<Genre> popGenres = Set.of(pop);
+        when(albumRepository.findAllByGenreSet(popGenres)).thenReturn(List.of(britney, karma, whenWeAllFallAsleep, rayOfLight, futureNostalgia, bad, goodbyeYellowBrickRoad));
+
+        List<Album> albums = albumService.getAlbumsByGenre(GenreType.POP);
+
+        assertNotNull(albums);
+        assertEquals(7, albums.size());
+        assertTrue(albums.containsAll(List.of(britney, karma, whenWeAllFallAsleep, rayOfLight, futureNostalgia, bad, goodbyeYellowBrickRoad)));
+    }
+
+    @Test
+    void getAlbumsByFormat_ShouldReturnListOfAlbums() {
+        when(albumRepository.findAllByFormat(Format.CD)).thenReturn(List.of(goodbyeYellowBrickRoad, bad, rayOfLight, futureNostalgia));
+
+        List<Album> albums = albumService.getAlbumsByFormat(Format.CD);
+
+        assertNotNull(albums);
+        assertEquals(4, albums.size());
+        assertTrue(albums.containsAll(List.of(goodbyeYellowBrickRoad, bad, rayOfLight, futureNostalgia)));
+    }
 }

@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface ArtistRepository extends CrudRepository<Artist, Long> {
     //    List<Album> findById(Long id);
-    List<Artist> findByFullName(String fullName);
+    List<Artist> findAllByFullName(String fullName);
 
     //    Optional<Artist> findById(Long id);
     //    Artist save(Artist artist);
