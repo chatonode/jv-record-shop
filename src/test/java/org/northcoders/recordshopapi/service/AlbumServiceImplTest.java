@@ -300,16 +300,10 @@ class AlbumServiceImplTest {
                 .currency(Currency.GBP)
                 .build();
 
-        System.out.println(albumCreateDTO);
-
         List<Artist> artists = List.of(elvisPresley);
         List<Genre> genres = List.of(rockRoll, country);
 
         Album expectedAlbum = AlbumCreateMapper.toEntity(albumCreateDTO, artists, genres);
-        expectedAlbum.setId(10L); // Repo sets it and we take it back
-        expectedAlbum.setQuantityInStock(0); // Same
-
-        System.out.println("expectedAlbum: " + expectedAlbum);
 
         when(artistRepository.findById(elvisPresley.getId())).thenReturn(Optional.of(elvisPresley));
         when(genreRepository.findById(rockRoll.getId())).thenReturn(Optional.of(rockRoll));
@@ -326,20 +320,28 @@ class AlbumServiceImplTest {
         System.out.println(createdAlbum);
 
         assertNotNull(createdAlbum);
-        assertEquals(expectedAlbum, createdAlbum);
+        verify(genreRepository).findById(rockRoll.getId());
+        verify(genreRepository).findById(country.getId());
+        verify(artistRepository).findById(elvisPresley.getId());
         verify(albumRepository).save(createdAlbum);
-    }
 
-//    @Test
-//    void createAlbum_ShouldThrowInvalidParameterException_WhenIdIsNotNull() {
-////        goodbyeYellowBrickRoad.setId(1L);
-//
-////        InvalidParameterException thrown = assertThrows(InvalidParameterException.class, () -> albumService.createAlbum(goodbyeYellowBrickRoad));
-//
-////        assertEquals("Invalid parameter '%s' provided for entity '%s'.".formatted("id", Album.class.getSimpleName()), thrown.getMessage());
-//
-//
-//    }
+        assertEquals(10L, createdAlbum.getId());
+        assertEquals(albumCreateDTO.getTitle(), createdAlbum.getTitle());
+        assertEquals(1, createdAlbum.getArtistSet().size());
+        assertEquals(elvisPresley, createdAlbum.getArtistSet().stream().toList().getFirst());
+        assertEquals(2, createdAlbum.getGenreSet().size());
+        assertEquals(rockRoll, createdAlbum.getGenreSet().stream().toList().get(0));
+        assertEquals(country, createdAlbum.getGenreSet().stream().toList().get(1));
+        assertEquals(new HashSet<>(genres), createdAlbum.getGenreSet());
+        assertEquals(albumCreateDTO.getDurationInSeconds(), createdAlbum.getDurationInSeconds());
+        assertEquals(albumCreateDTO.getImageUrl(), createdAlbum.getImageUrl());
+        assertEquals(albumCreateDTO.getReleaseYear(), createdAlbum.getReleaseYear());
+        assertEquals(albumCreateDTO.getPublisher(), createdAlbum.getPublisher());
+        assertEquals(albumCreateDTO.getPriceInPences(), createdAlbum.getPriceInPences());
+        assertEquals(albumCreateDTO.getCurrency(), createdAlbum.getCurrency());
+        assertEquals(albumCreateDTO.getFormat(), createdAlbum.getFormat());
+        assertEquals(0, createdAlbum.getQuantityInStock());
+    }
 
     @Test
     void getAlbumByTitle_ShouldReturnAlbums_WhenAlbumsExistForGivenTitle() {
