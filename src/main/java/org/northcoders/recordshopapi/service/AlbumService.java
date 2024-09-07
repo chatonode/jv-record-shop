@@ -1,5 +1,6 @@
 package org.northcoders.recordshopapi.service;
 
+import org.northcoders.recordshopapi.dto.request.AlbumDTO;
 import org.northcoders.recordshopapi.model.*;
 
 import java.util.List;

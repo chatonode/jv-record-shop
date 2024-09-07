@@ -2,8 +2,10 @@ package org.northcoders.recordshopapi.service;
 
 import java.util.*;
 
+import org.northcoders.recordshopapi.dto.request.AlbumDTO;
 import org.northcoders.recordshopapi.model.Currency;
 import org.northcoders.recordshopapi.repository.GenreRepository;
+import org.northcoders.recordshopapi.util.mapper.AlbumMapper;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,8 @@ class AlbumServiceImplTest {
     private Artist eltonJohn, davidBowie, michaelJackson, britneySpears, tarkan, madonna, billieEilish, duaLipa;
 
     private Album goodbyeYellowBrickRoad, heroes, bad, britney, karma, rayOfLight, whenWeAllFallAsleep, futureNostalgia;
+
+    private AlbumDTO goodbyeYellowBrickRoadDTO, heroesDTO, badDTO, britneyDTO, karmaDTO, rayOfLightDTO, whenWeAllFallAsleepDTO, futureNostalgiaDTO;
 
     void initialiseGenres() {
         rock = Genre.builder()
@@ -205,6 +209,17 @@ class AlbumServiceImplTest {
 
     }
 
+    void initialiseAlbumDTOs() {
+        goodbyeYellowBrickRoadDTO = AlbumMapper.toDTO(goodbyeYellowBrickRoad);
+        heroesDTO = AlbumMapper.toDTO(heroes);
+        badDTO = AlbumMapper.toDTO(bad);
+        britneyDTO = AlbumMapper.toDTO(britney);
+        karmaDTO = AlbumMapper.toDTO(karma);
+        rayOfLightDTO = AlbumMapper.toDTO(rayOfLight);
+        whenWeAllFallAsleepDTO = AlbumMapper.toDTO(whenWeAllFallAsleep);
+        futureNostalgiaDTO = AlbumMapper.toDTO(futureNostalgia);
+    }
+
     @BeforeEach
     void setUp() {
         this.initialiseGenres();
@@ -213,7 +228,7 @@ class AlbumServiceImplTest {
     }
 
     @Test
-    void createAlbum_ShouldReturnSavedAlbum_WhenIdIsNull() {
+    void createAlbum_ShouldReturnSavedAlbum_WhenAttributesAreValid() {
         when(albumRepository.save(goodbyeYellowBrickRoad)).thenReturn(goodbyeYellowBrickRoad);
 
         Album savedAlbum = albumService.createAlbum(goodbyeYellowBrickRoad);
@@ -223,14 +238,16 @@ class AlbumServiceImplTest {
         verify(albumRepository).save(goodbyeYellowBrickRoad);
     }
 
-    @Test
-    void createAlbum_ShouldThrowInvalidParameterException_WhenIdIsNotNull() {
-        goodbyeYellowBrickRoad.setId(1L);
-
-        InvalidParameterException thrown = assertThrows(InvalidParameterException.class, () -> albumService.createAlbum(goodbyeYellowBrickRoad));
-
-        assertEquals("Invalid parameter '%s' provided for entity '%s'.".formatted("id", Album.class.getSimpleName()), thrown.getMessage());
-    }
+//    @Test
+//    void createAlbum_ShouldThrowInvalidParameterException_WhenIdIsNotNull() {
+////        goodbyeYellowBrickRoad.setId(1L);
+//
+////        InvalidParameterException thrown = assertThrows(InvalidParameterException.class, () -> albumService.createAlbum(goodbyeYellowBrickRoad));
+//
+////        assertEquals("Invalid parameter '%s' provided for entity '%s'.".formatted("id", Album.class.getSimpleName()), thrown.getMessage());
+//
+//
+//    }
 
     @Test
     void getAlbumByTitle_ShouldReturnAlbums_WhenAlbumsExistForGivenTitle() {

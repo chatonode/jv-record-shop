@@ -1,14 +1,17 @@
 package org.northcoders.recordshopapi.controller;
 
+import org.northcoders.recordshopapi.dto.request.AlbumDTO;
 import org.northcoders.recordshopapi.model.Album;
 import org.northcoders.recordshopapi.model.Format;
 import org.northcoders.recordshopapi.model.GenreType;
-import org.northcoders.recordshopapi.model.response.SuccessResultType;
-import org.northcoders.recordshopapi.model.response.SuccessPayload;
+import org.northcoders.recordshopapi.dto.response.SuccessResultType;
+import org.northcoders.recordshopapi.dto.response.SuccessPayload;
 import org.northcoders.recordshopapi.service.AlbumService;
+import org.northcoders.recordshopapi.util.mapper.AlbumMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -45,6 +48,9 @@ public class AlbumController {
         } else if (format != null) {
             List<Album> albumsWithFormat = albumService.getAlbumsByFormat(format);
             albums.addAll(albumsWithFormat);
+        } else {
+            List<Album> allAlbums = albumService.getAllAlbums();
+            albums.addAll(allAlbums);
         }
 
         SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Fetched, Album.class, albums);
@@ -62,8 +68,8 @@ public class AlbumController {
     }
 
     @PostMapping
-    public ResponseEntity<SuccessPayload> createAlbum(@RequestBody Album album) {
-        Album createdAlbum = albumService.createAlbum(album);
+    public ResponseEntity<SuccessPayload> createAlbum(@RequestBody @Validated AlbumDTO albumDTO) {
+        Album createdAlbum = albumService.createAlbum(AlbumMapper.toEntity(albumDTO));
 
         SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Created, Album.class, createdAlbum);
 

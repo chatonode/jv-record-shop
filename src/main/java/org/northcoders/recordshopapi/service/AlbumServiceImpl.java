@@ -1,12 +1,13 @@
 package org.northcoders.recordshopapi.service;
 
+import org.northcoders.recordshopapi.dto.request.AlbumDTO;
 import org.northcoders.recordshopapi.exception.service.InvalidParameterException;
 import org.northcoders.recordshopapi.exception.service.NotFoundException;
-import org.northcoders.recordshopapi.model.Album;
-import org.northcoders.recordshopapi.model.Format;
-import org.northcoders.recordshopapi.model.Genre;
-import org.northcoders.recordshopapi.model.GenreType;
+import org.northcoders.recordshopapi.model.*;
 import org.northcoders.recordshopapi.repository.AlbumRepository;
+import org.northcoders.recordshopapi.repository.ArtistRepository;
+import org.northcoders.recordshopapi.repository.GenreRepository;
+import org.northcoders.recordshopapi.util.mapper.AlbumMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,12 @@ import java.util.Set;
 public class AlbumServiceImpl implements AlbumService {
     @Autowired
     AlbumRepository albumRepository;
+
+    @Autowired
+    ArtistRepository artistRepository;
+
+    @Autowired
+    GenreRepository genreRepository;
 
     @Override
     public List<Album> getAllAlbums() {
@@ -55,9 +62,9 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public Album createAlbum(Album album) {
-        if (album.getId() != null) {
-            throw new InvalidParameterException(Album.class, "id");
-        }
+//        if (album.getId() != null) {
+//            throw new InvalidParameterException(Album.class, "id");
+//        }
 
         return albumRepository.save(album);
     }

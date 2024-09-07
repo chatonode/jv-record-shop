@@ -1,4 +1,4 @@
-package org.northcoders.recordshopapi.model.response;
+package org.northcoders.recordshopapi.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
@@ -16,7 +16,7 @@ public class SuccessPayload extends Payload {
 
     @Builder
     public SuccessPayload(SuccessResultType successResultType, Class<?> entityClass, Object data) {
-        super("%s: %s".formatted(successResultType.name(), entityClass.getSimpleName()));
+        super(PayloadStatus.SUCCESS, "%s: %s".formatted(successResultType.name(), entityClass.getSimpleName()));
         this.type = successResultType;
         this.entityClass = entityClass;
         this.data = data;

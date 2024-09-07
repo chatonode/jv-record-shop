@@ -1,4 +1,4 @@
-package org.northcoders.recordshopapi.model.response;
+package org.northcoders.recordshopapi.dto.response;
 
 public enum SuccessResultType {
     Created,
