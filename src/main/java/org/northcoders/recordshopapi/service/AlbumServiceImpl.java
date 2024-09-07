@@ -1,19 +1,20 @@
 package org.northcoders.recordshopapi.service;
 
-import org.northcoders.recordshopapi.dto.request.AlbumDTO;
+import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
 import org.northcoders.recordshopapi.exception.service.InvalidParameterException;
 import org.northcoders.recordshopapi.exception.service.NotFoundException;
 import org.northcoders.recordshopapi.model.*;
 import org.northcoders.recordshopapi.repository.AlbumRepository;
 import org.northcoders.recordshopapi.repository.ArtistRepository;
 import org.northcoders.recordshopapi.repository.GenreRepository;
-import org.northcoders.recordshopapi.util.mapper.AlbumMapper;
+import org.northcoders.recordshopapi.util.mapper.AlbumCreateMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AlbumServiceImpl implements AlbumService {
@@ -47,7 +48,9 @@ public class AlbumServiceImpl implements AlbumService {
 
     @Override
     public List<Album> getAlbumsByGenre(GenreType genre) {
-        return albumRepository.findAllByGenreSet(Set.of(new Genre(genre)));
+        Genre foundGenre = genreRepository.findByName(genre).orElseThrow(() -> new NotFoundException(Genre.class));
+
+        return albumRepository.findAllByGenreSet(Set.of(foundGenre));
     }
 
     @Override
@@ -60,12 +63,25 @@ public class AlbumServiceImpl implements AlbumService {
         return albumRepository.findById(id).orElseThrow(() -> new NotFoundException(Album.class));
     }
 
-    @Override
-    public Album createAlbum(Album album) {
-//        if (album.getId() != null) {
-//            throw new InvalidParameterException(Album.class, "id");
-//        }
+//    @Override
+//    public Album createAlbum(AlbumCreateDTO albumDTO) {
+////        if (album.getId() != null) {
+////            throw new InvalidParameterException(Album.class, "id");
+////        }
+//
+//        return albumRepository.save(album);
+//    }
 
+    public Album createAlbum(AlbumCreateDTO albumCreateDTO) {
+        List<Artist> artists = albumCreateDTO.getArtistIds().stream()
+                .map(artistId -> artistRepository.findById(artistId).orElseThrow(() -> new NotFoundException(Artist.class)))
+                .toList();
+
+        List<Genre> genres = albumCreateDTO.getGenreIds().stream()
+                .map(genreId -> genreRepository.findById(genreId).orElseThrow(() -> new NotFoundException(Genre.class)))
+                .toList();
+
+        Album album = AlbumCreateMapper.toEntity(albumCreateDTO, artists, genres);
         return albumRepository.save(album);
     }
 
@@ -129,4 +145,14 @@ public class AlbumServiceImpl implements AlbumService {
 
         albumRepository.deleteById(id);
     }
+
+//    private Artist findOrCreateArtist(AlbumCreateArtistDTO albumCreateArtistDTO) {
+//        return artistRepository.findByNameAndBirthdate(albumCreateArtistDTO.getName(), albumCreateArtistDTO.getBirthdate())
+//                .orElseGet(() -> artistRepository.save(ArtistMapper.toEntity(albumCreateArtistDTO)));
+//    }
+//
+//    private Genre findOrCreateGenre(GenreDTO genreDTO) {
+//        return genreRepository.findByNameAndDescription(genreDTO.getName(), genreDTO.getDescription())
+//                .orElseGet(() -> genreRepository.save(GenreMapper.toEntity(genreDTO)));
+//    }
 }

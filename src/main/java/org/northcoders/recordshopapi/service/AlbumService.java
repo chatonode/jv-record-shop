@@ -1,6 +1,6 @@
 package org.northcoders.recordshopapi.service;
 
-import org.northcoders.recordshopapi.dto.request.AlbumDTO;
+import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
 import org.northcoders.recordshopapi.model.*;
 
 import java.util.List;
@@ -19,7 +19,7 @@ public interface AlbumService {
 
     Album getAlbumById(Long id); // OR NotFoundException
 
-    Album createAlbum(Album album); // OR InvalidParameterException
+    Album createAlbum(AlbumCreateDTO albumCreateDTO); // OR InvalidParameterException
 
     Album replaceAlbum(Long id, Album album); // OR NotFoundException
 

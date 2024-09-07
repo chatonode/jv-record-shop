@@ -1,4 +1,4 @@
-package org.northcoders.recordshopapi.dto.request;
+package org.northcoders.recordshopapi.dto.request.album;
 
 import java.util.List;
 
@@ -17,16 +17,16 @@ import org.northcoders.recordshopapi.model.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AlbumDTO {
+public class AlbumCreateDTO {
 
     @NotBlank(message = "Album title is required")
     private String title;
 
-    @NotEmpty(message = "At least one artist is required")
-    private List<ArtistDTO> artists;
+    @NotEmpty(message = "At least one artist id is required")
+    private List<Long> artistIds;
 
-    @NotNull(message = "At least one genre is required")
-    private List<GenreDTO> genres;
+    @NotEmpty(message = "At least one genre id is required")
+    private List<Long> genreIds;
 
     @NotNull(message = "Duration is required")
     @Min(value = 30, message = "Duration must be at least 30 seconds")
@@ -35,7 +35,7 @@ public class AlbumDTO {
     @URL(message = "Invalid image URL")
     private String imageUrl;
 
-    @Min(value = 1900, message = "Invalid release year")
+    @Min(value = 1900, message = "Invalid release year")  // Can be used without @NotNull if release year is allowed to be null
     private Integer releaseYear;
 
     private String publisher;
@@ -50,7 +50,7 @@ public class AlbumDTO {
     @NotNull(message = "Currency is required")
     private Currency currency;
 
-    @NotNull(message = "Stock quantity is required")
+//    @NotNull(message = "Stock quantity is required")
     @Min(value = 0, message = "Quantity in stock cannot be negative")
     private Integer quantityInStock;
 }

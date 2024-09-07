@@ -17,7 +17,7 @@ public class Genre {
     private Long id;
 
     @Column(nullable = false)
-//    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private GenreType name;
 
     @ManyToMany(mappedBy = "genreSet")

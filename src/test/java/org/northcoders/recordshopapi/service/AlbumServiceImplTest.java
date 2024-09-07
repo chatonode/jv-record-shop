@@ -1,11 +1,13 @@
 package org.northcoders.recordshopapi.service;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
-import org.northcoders.recordshopapi.dto.request.AlbumDTO;
+import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
 import org.northcoders.recordshopapi.model.Currency;
+import org.northcoders.recordshopapi.repository.ArtistRepository;
 import org.northcoders.recordshopapi.repository.GenreRepository;
-import org.northcoders.recordshopapi.util.mapper.AlbumMapper;
+import org.northcoders.recordshopapi.util.mapper.AlbumCreateMapper;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +17,6 @@ import org.mockito.Mock;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import org.northcoders.recordshopapi.exception.service.InvalidParameterException;
 import org.northcoders.recordshopapi.exception.service.NotFoundException;
 import org.northcoders.recordshopapi.model.*;
 import org.northcoders.recordshopapi.repository.AlbumRepository;
@@ -27,79 +28,129 @@ class AlbumServiceImplTest {
     private AlbumRepository albumRepository;
 
     @Mock
+    private ArtistRepository artistRepository;
+
+    @Mock
     GenreRepository genreRepository;
 
     @InjectMocks
     private AlbumServiceImpl albumService;
 
-    private Genre rock, pop, dancePop, jazz, electronic, funk, world;
+    private Artist eltonJohn, davidBowie, michaelJackson, britneySpears, tarkan, madonna, billieEilish, duaLipa, elvisPresley;
 
-    private Artist eltonJohn, davidBowie, michaelJackson, britneySpears, tarkan, madonna, billieEilish, duaLipa;
+    private Genre rock, pop, dancePop, electronic, funk, world, rockRoll, country, jazz;
 
     private Album goodbyeYellowBrickRoad, heroes, bad, britney, karma, rayOfLight, whenWeAllFallAsleep, futureNostalgia;
-
-    private AlbumDTO goodbyeYellowBrickRoadDTO, heroesDTO, badDTO, britneyDTO, karmaDTO, rayOfLightDTO, whenWeAllFallAsleepDTO, futureNostalgiaDTO;
-
-    void initialiseGenres() {
-        rock = Genre.builder()
-                .name(GenreType.ROCK)
-                .build();
-        pop = Genre.builder()
-                .name(GenreType.POP)
-                .build();
-        dancePop = Genre.builder()
-                .name(GenreType.DANCE_POP)
-                .build();
-        jazz = Genre.builder()
-                .name(GenreType.JAZZ)
-                .build();
-        electronic = Genre.builder()
-                .name(GenreType.ELECTRONIC)
-                .build();
-        funk = Genre.builder()
-                .name(GenreType.FUNK)
-                .build();
-        world = Genre.builder()
-                .name(GenreType.WORLD)
-                .build();
-    }
 
     void initialiseArtists() {
         eltonJohn = Artist.builder()
                 .fullName("Elton John")
                 .albums(List.of())
                 .build();
+        eltonJohn.setId(1L);
         davidBowie = Artist.builder()
                 .fullName("David Bowie")
                 .albums(List.of())
                 .build();
+        davidBowie.setId(2L);
 
         michaelJackson = Artist.builder()
                 .fullName("Michael Jackson")
                 .albums(List.of())
                 .build();
+        michaelJackson.setId(3L);
+
         britneySpears = Artist.builder()
                 .fullName("Britney Spears")
                 .albums(List.of())
                 .build();
+        britneySpears.setId(4L);
+
         tarkan = Artist.builder()
                 .fullName("Tarkan")
                 .albums(List.of())
                 .build();
+        tarkan.setId(5L);
+
         madonna = Artist.builder()
                 .fullName("Madonna")
                 .albums(List.of())
                 .build();
+        madonna.setId(6L);
 
         billieEilish = Artist.builder()
                 .fullName("Billie Eilish")
                 .albums(List.of())
                 .build();
+        billieEilish.setId(7L);
 
         duaLipa = Artist.builder()
                 .fullName("Dua Lipa")
                 .albums(List.of())
                 .build();
+        duaLipa.setId(8L);
+
+        elvisPresley = Artist.builder()
+                .fullName("Elvis Presley")
+                .albums(List.of())
+                .build();
+        elvisPresley.setId(9L);
+    }
+
+    void initialiseGenres() {
+        rock = Genre.builder()
+                .name(GenreType.ROCK)
+                .build();
+        rock.setId(1L);
+        rock.setAlbumSet(new HashSet<>());
+
+        pop = Genre.builder()
+                .name(GenreType.POP)
+                .build();
+        pop.setId(2L);
+        pop.setAlbumSet(new HashSet<>());
+
+        dancePop = Genre.builder()
+                .name(GenreType.DANCE_POP)
+                .build();
+        dancePop.setId(3L);
+        dancePop.setAlbumSet(new HashSet<>());
+
+        electronic = Genre.builder()
+                .name(GenreType.ELECTRONIC)
+                .build();
+        electronic.setId(4L);
+        electronic.setAlbumSet(new HashSet<>());
+
+        funk = Genre.builder()
+                .name(GenreType.FUNK)
+                .build();
+        funk.setId(5L);
+        funk.setAlbumSet(new HashSet<>());
+
+        world = Genre.builder()
+                .name(GenreType.WORLD)
+                .build();
+        world.setId(6L);
+        world.setAlbumSet(new HashSet<>());
+
+        jazz = Genre.builder()
+                .name(GenreType.JAZZ)
+                .build(); // No Albums own this genre
+        jazz.setId(7L);
+        jazz.setAlbumSet(new HashSet<>());
+
+        rockRoll = Genre.builder()
+                .name(GenreType.ROCK_ROLL)
+                .build();
+        rockRoll.setId(8L);
+        rockRoll.setAlbumSet(new HashSet<>());
+
+        country = Genre.builder()
+                .name(GenreType.COUNTRY)
+                .build();
+        country.setId(9L);
+        country.setAlbumSet(new HashSet<>());
     }
 
     void initialiseAlbums() {
@@ -115,6 +166,8 @@ class AlbumServiceImplTest {
                 .priceInPences(1999) // £19.99
                 .currency(Currency.GBP)
                 .build();
+        goodbyeYellowBrickRoad.setId(1L);
+        goodbyeYellowBrickRoad.setQuantityInStock(0);
 
         heroes = Album.builder()
                 .title("Heroes")
@@ -128,6 +181,8 @@ class AlbumServiceImplTest {
                 .priceInPences(1799) // £17.99
                 .currency(Currency.GBP)
                 .build();
+        heroes.setId(2L);
+        heroes.setQuantityInStock(0);
 
         bad = Album.builder()
                 .title("Bad")
@@ -141,6 +196,8 @@ class AlbumServiceImplTest {
                 .priceInPences(1899) // £18.99
                 .currency(Currency.GBP)
                 .build();
+        bad.setId(3L);
+        bad.setQuantityInStock(0);
 
         britney = Album.builder()
                 .title("Britney")
@@ -154,6 +211,8 @@ class AlbumServiceImplTest {
                 .priceInPences(1799) // £17.99
                 .currency(Currency.GBP)
                 .build();
+        britney.setId(4L);
+        britney.setQuantityInStock(0);
 
         karma = Album.builder()
                 .title("Karma")
@@ -167,6 +226,8 @@ class AlbumServiceImplTest {
                 .priceInPences(1499) // £14.99
                 .currency(Currency.GBP)
                 .build();
+        karma.setId(5L);
+        karma.setQuantityInStock(0);
 
         rayOfLight = Album.builder()
                 .title("Ray of Light")
@@ -180,6 +241,8 @@ class AlbumServiceImplTest {
                 .priceInPences(1799) // £17.99
                 .currency(Currency.GBP)
                 .build();
+        rayOfLight.setId(6L);
+        rayOfLight.setQuantityInStock(0);
 
         whenWeAllFallAsleep = Album.builder()
                 .title("When We All Fall Asleep, Where Do We Go?")
@@ -193,6 +256,8 @@ class AlbumServiceImplTest {
                 .priceInPences(1499) // £14.99
                 .currency(Currency.GBP)
                 .build();
+        whenWeAllFallAsleep.setId(7L);
+        whenWeAllFallAsleep.setQuantityInStock(0);
 
         futureNostalgia = Album.builder()
                 .title("Future Nostalgia")
@@ -206,36 +271,63 @@ class AlbumServiceImplTest {
                 .priceInPences(1599) // £15.99
                 .currency(Currency.GBP)
                 .build();
-
-    }
-
-    void initialiseAlbumDTOs() {
-        goodbyeYellowBrickRoadDTO = AlbumMapper.toDTO(goodbyeYellowBrickRoad);
-        heroesDTO = AlbumMapper.toDTO(heroes);
-        badDTO = AlbumMapper.toDTO(bad);
-        britneyDTO = AlbumMapper.toDTO(britney);
-        karmaDTO = AlbumMapper.toDTO(karma);
-        rayOfLightDTO = AlbumMapper.toDTO(rayOfLight);
-        whenWeAllFallAsleepDTO = AlbumMapper.toDTO(whenWeAllFallAsleep);
-        futureNostalgiaDTO = AlbumMapper.toDTO(futureNostalgia);
+        futureNostalgia.setId(8L);
+        futureNostalgia.setQuantityInStock(2);
     }
 
     @BeforeEach
     void setUp() {
-        this.initialiseGenres();
         this.initialiseArtists();
+        this.initialiseGenres();
         this.initialiseAlbums();
     }
 
     @Test
     void createAlbum_ShouldReturnSavedAlbum_WhenAttributesAreValid() {
-        when(albumRepository.save(goodbyeYellowBrickRoad)).thenReturn(goodbyeYellowBrickRoad);
+        List<Long> artistIds = List.of(elvisPresley.getId());
+        List<Long> genreIds = List.of(rockRoll.getId(), country.getId());
 
-        Album savedAlbum = albumService.createAlbum(goodbyeYellowBrickRoad);
+        AlbumCreateDTO albumCreateDTO = AlbumCreateDTO.builder()
+                .title("Elvis Presley")
+                .artistIds(artistIds)
+                .genreIds(genreIds)
+                .durationInSeconds(2400) // Approx. 40 minutes
+                .imageUrl("https://upload.wikimedia.org/wikipedia/en/thumb/a/a8/Elvis_Presley_LPM-1254_Album_Cover.jpg/220px-Elvis_Presley_LPM-1254_Album_Cover.jpg")
+                .releaseYear(1956)
+                .format(Format.Vinyl) // 1950s format
+                .publisher("RCA Victor")
+                .priceInPences(1299) // £12.99
+                .currency(Currency.GBP)
+                .build();
 
-        assertNotNull(savedAlbum);
-        assertEquals(goodbyeYellowBrickRoad, savedAlbum);
-        verify(albumRepository).save(goodbyeYellowBrickRoad);
+        System.out.println(albumCreateDTO);
+
+        List<Artist> artists = List.of(elvisPresley);
+        List<Genre> genres = List.of(rockRoll, country);
+
+        Album expectedAlbum = AlbumCreateMapper.toEntity(albumCreateDTO, artists, genres);
+        expectedAlbum.setId(10L); // Repo sets it and we take it back
+        expectedAlbum.setQuantityInStock(0); // Same
+
+        System.out.println("expectedAlbum: " + expectedAlbum);
+
+        when(artistRepository.findById(elvisPresley.getId())).thenReturn(Optional.of(elvisPresley));
+        when(genreRepository.findById(rockRoll.getId())).thenReturn(Optional.of(rockRoll));
+        when(genreRepository.findById(country.getId())).thenReturn(Optional.of(country));
+        when(albumRepository.save(expectedAlbum)).thenAnswer(invocationOnMock -> {
+            Album album = invocationOnMock.getArgument(0);
+            album.setId(10L);
+            album.setQuantityInStock(0);
+            return album;
+        });
+
+        Album createdAlbum = albumService.createAlbum(albumCreateDTO);
+
+        System.out.println(createdAlbum);
+
+        assertNotNull(createdAlbum);
+        assertEquals(expectedAlbum, createdAlbum);
+        verify(albumRepository).save(createdAlbum);
     }
 
 //    @Test
@@ -293,6 +385,7 @@ class AlbumServiceImplTest {
     @Test
     void replaceAlbum_ShouldReturnUpdatedAlbum_WhenAlbumExists() {
         Album updatedAlbum = goodbyeYellowBrickRoad;
+        updatedAlbum.setId(null);
         updatedAlbum.setTitle("Updated Title");
         when(albumRepository.findById(1L)).thenReturn(Optional.of(goodbyeYellowBrickRoad));
         when(albumRepository.save(updatedAlbum)).thenReturn(updatedAlbum);
@@ -365,6 +458,7 @@ class AlbumServiceImplTest {
     @Test
     void getAlbumsByGenre_ShouldReturnListOfAlbums_WhenAlbumsExistForGivenGenres() {
         Set<Genre> popGenres = Set.of(pop);
+        when(genreRepository.findByName(pop.getName())).thenReturn(Optional.of(pop));
         when(albumRepository.findAllByGenreSet(popGenres)).thenReturn(List.of(britney, karma, whenWeAllFallAsleep, rayOfLight, futureNostalgia, bad, goodbyeYellowBrickRoad));
 
         List<Album> albums = albumService.getAlbumsByGenre(GenreType.POP);
@@ -377,10 +471,10 @@ class AlbumServiceImplTest {
     @Test
     void getAlbumsByGenre_ShouldReturnEmptyListOfAlbums_WhenNoAlbumsExistForGivenGenres() {
         Set<Genre> jazzGenres = Set.of(jazz);
-        when(genreRepository.save(jazz)).thenReturn(jazz);
+        when(genreRepository.findByName(jazz.getName())).thenReturn(Optional.of(jazz));
         when(albumRepository.findAllByGenreSet(jazzGenres)).thenReturn(List.of());
 
-        List<Album> albums = albumService.getAlbumsByGenre(GenreType.POP);
+        List<Album> albums = albumService.getAlbumsByGenre(GenreType.JAZZ);
 
         assertNotNull(albums);
         assertEquals(0, albums.size());

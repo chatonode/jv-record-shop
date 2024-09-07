@@ -2,6 +2,7 @@ package org.northcoders.recordshopapi.model;
 
 public enum GenreType {
     ROCK,
+    ROCK_ROLL,
     PSYCHEDELIC,
     POP,
     DANCE_POP,
