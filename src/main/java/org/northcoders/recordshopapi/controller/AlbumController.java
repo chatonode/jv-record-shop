@@ -3,10 +3,9 @@ package org.northcoders.recordshopapi.controller;
 import org.northcoders.recordshopapi.model.Album;
 import org.northcoders.recordshopapi.model.Format;
 import org.northcoders.recordshopapi.model.GenreType;
-import org.northcoders.recordshopapi.model.response.OperationType;
-import org.northcoders.recordshopapi.model.response.SuccessResponse;
+import org.northcoders.recordshopapi.model.response.SuccessResultType;
+import org.northcoders.recordshopapi.model.response.SuccessPayload;
 import org.northcoders.recordshopapi.service.AlbumService;
-import org.northcoders.recordshopapi.service.AlbumServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +22,7 @@ public class AlbumController {
     AlbumService albumService;
 
     @GetMapping
-    public ResponseEntity<SuccessResponse> getAllAlbums(
+    public ResponseEntity<SuccessPayload> getAllAlbums(
             @RequestParam(required = false, name = "year") Integer releaseYear,
             @RequestParam(required = false, name = "title") String title,
             @RequestParam(required = false, name = "genre") GenreType genreType,
@@ -48,44 +47,44 @@ public class AlbumController {
             albums.addAll(albumsWithFormat);
         }
 
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, Album.class, OperationType.FETCH, albums);
+        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Fetched, Album.class, albums);
 
-        return new ResponseEntity<>(successResponse, successResponse.getStatus());
+        return new ResponseEntity<>(successPayload, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessResponse> getAlbumById(@PathVariable String id) {
+    public ResponseEntity<SuccessPayload> getAlbumById(@PathVariable String id) {
         Album album = albumService.getAlbumById(Long.parseLong(id));
 
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, Album.class, OperationType.FETCH, album);
+        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Fetched, Album.class, album);
 
-        return new ResponseEntity<>(successResponse, successResponse.getStatus());
+        return new ResponseEntity<>(successPayload, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<SuccessResponse> createAlbum(@RequestBody Album album) {
+    public ResponseEntity<SuccessPayload> createAlbum(@RequestBody Album album) {
         Album createdAlbum = albumService.createAlbum(album);
 
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.CREATED, Album.class, OperationType.INSERT, createdAlbum);
+        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Created, Album.class, createdAlbum);
 
-        return new ResponseEntity<>(successResponse, successResponse.getStatus());
+        return new ResponseEntity<>(successPayload, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SuccessResponse> replaceAlbum(@PathVariable String id, @RequestBody Album album) {
+    public ResponseEntity<SuccessPayload> replaceAlbum(@PathVariable String id, @RequestBody Album album) {
         Album replacedAlbum = albumService.replaceAlbum(Long.parseLong(id), album);
 
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, Album.class, OperationType.MODIFY, replacedAlbum);
+        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Updated, Album.class, replacedAlbum);
 
-        return new ResponseEntity<>(successResponse, successResponse.getStatus());
+        return new ResponseEntity<>(successPayload, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<SuccessResponse> deleteAlbum(@PathVariable String id) {
+    public ResponseEntity<SuccessPayload> deleteAlbum(@PathVariable String id) {
         albumService.deleteAlbumById(Long.parseLong(id));
 
-        SuccessResponse successResponse = new SuccessResponse(HttpStatus.OK, Album.class, OperationType.REMOVE, id);
+        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Deleted, Album.class, id);
 
-        return new ResponseEntity<>(successResponse, successResponse.getStatus());
+        return new ResponseEntity<>(successPayload, HttpStatus.OK);
     }
 }

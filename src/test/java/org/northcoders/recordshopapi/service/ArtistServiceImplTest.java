@@ -93,7 +93,7 @@ class ArtistServiceImplTest {
 
         NotFoundException thrown = assertThrows(NotFoundException.class, () -> artistService.getArtistById(1L));
 
-        assertEquals("Entity 'Artist' not found.", thrown.getMessage());
+        assertEquals("NotFound: Artist", thrown.getMessage());
     }
 
 

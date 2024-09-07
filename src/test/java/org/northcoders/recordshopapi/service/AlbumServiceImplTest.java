@@ -270,7 +270,7 @@ class AlbumServiceImplTest {
 
         NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.getAlbumById(1L));
 
-        assertEquals("Entity '%s' not found.".formatted(Album.class.getSimpleName()), thrown.getMessage());
+        assertEquals("NotFound: Album", thrown.getMessage());
     }
 
     @Test
@@ -293,7 +293,7 @@ class AlbumServiceImplTest {
 
         NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.replaceAlbum(1L, goodbyeYellowBrickRoad));
 
-        assertEquals("Entity '%s' not found.".formatted(Album.class.getSimpleName()), thrown.getMessage());
+        assertEquals("NotFound: Album", thrown.getMessage());
     }
 
     @Test
@@ -311,7 +311,7 @@ class AlbumServiceImplTest {
 
         NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.deleteAlbumById(1L));
 
-        assertEquals("Entity '%s' not found.".formatted(Album.class.getSimpleName()), thrown.getMessage());
+        assertEquals("NotFound: Album", thrown.getMessage());
     }
 
     @Test
