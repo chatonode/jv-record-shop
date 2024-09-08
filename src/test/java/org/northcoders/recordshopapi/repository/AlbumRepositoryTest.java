@@ -1,11 +1,11 @@
 package org.northcoders.recordshopapi.repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.northcoders.recordshopapi.util.TestDataFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -15,7 +15,7 @@ import org.northcoders.recordshopapi.model.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-class AlbumRepositoryTest {
+class AlbumRepositoryTestDataFactory extends TestDataFactory {
 
     @Autowired
     private AlbumRepository albumRepository;
@@ -23,192 +23,49 @@ class AlbumRepositoryTest {
     @Autowired
     private GenreRepository genreRepository;
 
-    private Genre rock, pop, dancePop, jazz, electronic, funk, world;
-
-    private Artist eltonJohn, davidBowie, michaelJackson, britneySpears, tarkan, madonna, billieEilish, duaLipa;
-
-    private Album goodbyeYellowBrickRoad, heroes, bad, britney, karma, rayOfLight, whenWeAllFallAsleep, futureNostalgia;
-
-    void initialiseGenres() {
-        rock = Genre.builder()
-                .name(GenreType.ROCK)
-                .build();
-        pop = Genre.builder()
-                .name(GenreType.POP)
-                .build();
-        dancePop = Genre.builder()
-                .name(GenreType.DANCE_POP)
-                .build();
-        jazz = Genre.builder()
-                .name(GenreType.JAZZ)
-                .build();
-        electronic = Genre.builder()
-                .name(GenreType.ELECTRONIC)
-                .build();
-        funk = Genre.builder()
-                .name(GenreType.FUNK)
-                .build();
-        world = Genre.builder()
-                .name(GenreType.WORLD)
-                .build();
-    }
-
-    void initialiseArtists() {
-        eltonJohn = Artist.builder()
-                .fullName("Elton John")
-                .albums(List.of())
-                .build();
-        davidBowie = Artist.builder()
-                .fullName("David Bowie")
-                .albums(List.of())
-                .build();
-
-        michaelJackson = Artist.builder()
-                .fullName("Michael Jackson")
-                .albums(List.of())
-                .build();
-        britneySpears = Artist.builder()
-                .fullName("Britney Spears")
-                .albums(List.of())
-                .build();
-        tarkan = Artist.builder()
-                .fullName("Tarkan")
-                .albums(List.of())
-                .build();
-        madonna = Artist.builder()
-                .fullName("Madonna")
-                .albums(List.of())
-                .build();
-
-        billieEilish = Artist.builder()
-                .fullName("Billie Eilish")
-                .albums(List.of())
-                .build();
-
-        duaLipa = Artist.builder()
-                .fullName("Dua Lipa")
-                .albums(List.of())
-                .build();
-    }
-
-    void initialiseAlbums() {
-        goodbyeYellowBrickRoad = Album.builder()
-                .title("Goodbye Yellow Brick Road")
-                .artists(List.of(eltonJohn))
-                .genres(List.of(rock, pop))
-                .durationInSeconds(4000) // Approx. 66 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/8/86/Elton_John_-_Goodbye_Yellow_Brick_Road.jpg")
-                .releaseYear(1973)
-                .format(Format.CD)
-                .publisher("DJM Records")
-                .priceInPences(1999) // £19.99
-                .currency(Currency.GBP)
-                .build();
-
-        heroes = Album.builder()
-                .title("Heroes")
-                .artists(List.of(davidBowie))
-                .genres(List.of(rock, electronic))
-                .durationInSeconds(2600) // Approx. 43 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/7/7b/David_Bowie_-_Heroes.png")
-                .releaseYear(1977)
-                .format(Format.Vinyl)
-                .publisher("RCA Records")
-                .priceInPences(1799) // £17.99
-                .currency(Currency.GBP)
-                .build();
-
-        bad = Album.builder()
-                .title("Bad")
-                .artists(List.of(michaelJackson))
-                .genres(List.of(pop, funk))
-                .durationInSeconds(3200) // Approx. 53 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/5/51/Michael_Jackson_-_Bad.png")
-                .releaseYear(1987)
-                .format(Format.CD)
-                .publisher("Epic Records")
-                .priceInPences(1899) // £18.99
-                .currency(Currency.GBP)
-                .build();
-
-        britney = Album.builder()
-                .title("Britney")
-                .artists(List.of(britneySpears))
-                .genres(List.of(pop))
-                .durationInSeconds(2600) // Approx. 43 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/0/0c/Britney_Spears_-_Britney.png")
-                .releaseYear(2001)
-                .format(Format.Cassette)
-                .publisher("Jive Records")
-                .priceInPences(1799) // £17.99
-                .currency(Currency.GBP)
-                .build();
-
-        karma = Album.builder()
-                .title("Karma")
-                .artists(List.of(tarkan))
-                .genres(List.of(pop, world))
-                .durationInSeconds(3100) // Approx. 51 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/1/11/Tarkan_-_Karma_%28Tarkan_album%29.jpg")
-                .releaseYear(2001)
-                .format(Format.Vinyl)
-                .publisher("Universal Music Turkey")
-                .priceInPences(1499) // £14.99
-                .currency(Currency.GBP)
-                .build();
-
-        rayOfLight = Album.builder()
-                .title("Ray of Light")
-                .artists(List.of(madonna))
-                .genres(List.of(pop, electronic))
-                .durationInSeconds(3200) // Approx. 53 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/d/dd/Ray_of_Light_Madonna.png")
-                .releaseYear(1998)
-                .format(Format.CD)
-                .publisher("Warner Bros. Records")
-                .priceInPences(1799) // £17.99
-                .currency(Currency.GBP)
-                .build();
-
-        whenWeAllFallAsleep = Album.builder()
-                .title("When We All Fall Asleep, Where Do We Go?")
-                .artists(List.of(billieEilish))
-                .genres(List.of(pop))
-                .durationInSeconds(2600) // Approx. 43 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/3/38/When_We_All_Fall_Asleep%2C_Where_Do_We_Go%3F.png")
-                .releaseYear(2019)
-                .format(Format.Vinyl)
-                .publisher("Interscope Records")
-                .priceInPences(1499) // £14.99
-                .currency(Currency.GBP)
-                .build();
-
-        futureNostalgia = Album.builder()
-                .title("Future Nostalgia")
-                .artists(List.of(duaLipa))
-                .genres(List.of(pop, dancePop))
-                .durationInSeconds(2300) // Approx. 38 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/f/f5/Dua_Lipa_-_Future_Nostalgia_%28Official_Album_Cover%29.png")
-                .releaseYear(2020)
-                .format(Format.CD)
-                .publisher("Warner Records")
-                .priceInPences(1599) // £15.99
-                .currency(Currency.GBP)
-                .build();
-
+    public AlbumRepositoryTestDataFactory() {
+        super();
     }
 
     @BeforeEach
     void setUp() {
+        this.initialiseAlbums();
         this.initialiseGenres();
         this.initialiseArtists();
-        this.initialiseAlbums();
 
-
-        // Saves all nested artists and genres altogether thanks to CascadeType.PERSIST
+        // Saves all nested artists and genres altogether thanks to CascadeType.ALL
         albumRepository.saveAll(List.of(
                 goodbyeYellowBrickRoad, heroes, bad, britney, karma, rayOfLight, whenWeAllFallAsleep, futureNostalgia
         ));
+    }
+
+    @Test
+    void save_setsNullAttributesToValues() {
+        Album album = Album.builder()
+                .title("Elvis Presley")
+                .artists(List.of(elvisPresley)) // Predefined artist object
+                .genres(List.of(rockRoll, country)) // Predefined genres
+                .durationInSeconds(2400) // Approx. 40 minutes
+                .imageUrl("https://upload.wikimedia.org/wikipedia/en/thumb/a/a8/Elvis_Presley_LPM-1254_Album_Cover.jpg/220px-Elvis_Presley_LPM-1254_Album_Cover.jpg")
+                .releaseYear(1956)
+                .format(Format.Vinyl) // 1950s format
+                .publisher("RCA Victor")
+                .priceInPences(1299) // £12.99
+                .currency(Currency.GBP)
+                .build();
+
+        Album actualAlbum = albumRepository.save(album);
+
+        assertNotNull(actualAlbum);
+
+        assertNotEquals(album.getId(), actualAlbum.getId());
+        assertNotEquals(null, actualAlbum.getId());
+        assertNotEquals(currentAlbumId.get(), actualAlbum.getId());
+        assertEquals(currentAlbumId.intValue() + 1, actualAlbum.getId().intValue());
+
+        assertNotEquals(album.getCreatedDate(), actualAlbum.getCreatedDate());
+        assertNotEquals(null, actualAlbum.getCreatedDate());
+        assertEquals(, actualAlbum.getCreatedDate());
     }
 
     @Test

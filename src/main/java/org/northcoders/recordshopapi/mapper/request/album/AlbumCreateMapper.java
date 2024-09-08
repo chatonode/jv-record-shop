@@ -1,4 +1,4 @@
-package org.northcoders.recordshopapi.util.mapper;
+package org.northcoders.recordshopapi.mapper;
 
 import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
 import org.northcoders.recordshopapi.model.Album;
