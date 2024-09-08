@@ -1,6 +1,6 @@
-package org.northcoders.recordshopapi.dto.response.artist;
+package org.northcoders.recordshopapi.dto.response.genre;
 
-import lombok.*;
+import lombok.Builder;
 
 @Builder
 public record FlattenedAlbumDTO(

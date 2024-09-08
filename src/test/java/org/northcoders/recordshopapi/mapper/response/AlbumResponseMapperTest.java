@@ -31,11 +31,15 @@ class AlbumResponseMapperTest {
                 .albums(List.of())
                 .build();
         artist.setId(1L);
+        artist.setCreatedDate(new Date());
+        artist.setUpdatedDate(new Date());
 
         Genre genre = Genre.builder()
                 .name(GenreType.ROCK)
                 .build();
         genre.setId(1L);
+        genre.setCreatedDate(new Date());
+        genre.setUpdatedDate(new Date());
 
         Album album = Album.builder()
                 .title("Test Album")
@@ -50,7 +54,7 @@ class AlbumResponseMapperTest {
                 .format(Format.Vinyl)
                 .build();
 
-        album.setId(1L);  // Set the ID after building
+        album.setId(1L);
         album.setQuantityInStock(10);
         album.setCreatedDate(new Date());
         album.setUpdatedDate(new Date());
