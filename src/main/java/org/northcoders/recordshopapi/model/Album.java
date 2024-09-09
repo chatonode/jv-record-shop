@@ -3,7 +3,10 @@ package org.northcoders.recordshopapi.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,6 +66,15 @@ public class Album {
 
     @Column(nullable = false)
     private Format format;
+
+    @CreatedDate
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
+    private Date createdDate;
+
+    @LastModifiedDate // Modifies after each .save()
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedDate;
 
     @Builder
     public Album(String title, List<Artist> artists, List<Genre> genres, Integer durationInSeconds, String imageUrl, Integer releaseYear, String publisher, Format format, Integer priceInPences, Currency currency) {

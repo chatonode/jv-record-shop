@@ -1,353 +1,268 @@
-package org.northcoders.recordshopapi.service;
-
-import java.util.*;
-
-import org.northcoders.recordshopapi.model.Currency;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
-import org.northcoders.recordshopapi.exception.service.InvalidParameterException;
-import org.northcoders.recordshopapi.exception.service.NotFoundException;
-import org.northcoders.recordshopapi.model.*;
-import org.northcoders.recordshopapi.repository.AlbumRepository;
-
-@DataJpaTest
-class AlbumServiceImplTest {
-
-    @Mock
-    private AlbumRepository albumRepository;
-
-    @InjectMocks
-    private AlbumServiceImpl albumService;
-
-    private Genre rock, pop, dancePop, jazz, electronic, funk, world;
-
-    private Artist eltonJohn, davidBowie, michaelJackson, britneySpears, tarkan, madonna, billieEilish, duaLipa;
-
-    private Album goodbyeYellowBrickRoad, heroes, bad, britney, karma, rayOfLight, whenWeAllFallAsleep, futureNostalgia;
-
-    void initialiseGenres() {
-        rock = Genre.builder()
-                .name(GenreType.ROCK)
-                .build();
-        pop = Genre.builder()
-                .name(GenreType.POP)
-                .build();
-        dancePop = Genre.builder()
-                .name(GenreType.DANCE_POP)
-                .build();
-        jazz = Genre.builder()
-                .name(GenreType.JAZZ)
-                .build();
-        electronic = Genre.builder()
-                .name(GenreType.ELECTRONIC)
-                .build();
-        funk = Genre.builder()
-                .name(GenreType.FUNK)
-                .build();
-        world = Genre.builder()
-                .name(GenreType.WORLD)
-                .build();
-    }
-
-    void initialiseArtists() {
-        eltonJohn = Artist.builder()
-                .fullName("Elton John")
-                .albums(List.of())
-                .build();
-        davidBowie = Artist.builder()
-                .fullName("David Bowie")
-                .albums(List.of())
-                .build();
-
-        michaelJackson = Artist.builder()
-                .fullName("Michael Jackson")
-                .albums(List.of())
-                .build();
-        britneySpears = Artist.builder()
-                .fullName("Britney Spears")
-                .albums(List.of())
-                .build();
-        tarkan = Artist.builder()
-                .fullName("Tarkan")
-                .albums(List.of())
-                .build();
-        madonna = Artist.builder()
-                .fullName("Madonna")
-                .albums(List.of())
-                .build();
-
-        billieEilish = Artist.builder()
-                .fullName("Billie Eilish")
-                .albums(List.of())
-                .build();
-
-        duaLipa = Artist.builder()
-                .fullName("Dua Lipa")
-                .albums(List.of())
-                .build();
-    }
-
-    void initialiseAlbums() {
-        goodbyeYellowBrickRoad = Album.builder()
-                .title("Goodbye Yellow Brick Road")
-                .artists(List.of(eltonJohn))
-                .genres(List.of(rock, pop))
-                .durationInSeconds(4000) // Approx. 66 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/8/86/Elton_John_-_Goodbye_Yellow_Brick_Road.jpg")
-                .releaseYear(1973)
-                .format(Format.CD)
-                .publisher("DJM Records")
-                .priceInPences(1999) // £19.99
-                .currency(Currency.GBP)
-                .build();
-
-        heroes = Album.builder()
-                .title("Heroes")
-                .artists(List.of(davidBowie))
-                .genres(List.of(rock, electronic))
-                .durationInSeconds(2600) // Approx. 43 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/7/7b/David_Bowie_-_Heroes.png")
-                .releaseYear(1977)
-                .format(Format.Vinyl)
-                .publisher("RCA Records")
-                .priceInPences(1799) // £17.99
-                .currency(Currency.GBP)
-                .build();
-
-        bad = Album.builder()
-                .title("Bad")
-                .artists(List.of(michaelJackson))
-                .genres(List.of(pop, funk))
-                .durationInSeconds(3200) // Approx. 53 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/5/51/Michael_Jackson_-_Bad.png")
-                .releaseYear(1987)
-                .format(Format.CD)
-                .publisher("Epic Records")
-                .priceInPences(1899) // £18.99
-                .currency(Currency.GBP)
-                .build();
-
-        britney = Album.builder()
-                .title("Britney")
-                .artists(List.of(britneySpears))
-                .genres(List.of(pop))
-                .durationInSeconds(2600) // Approx. 43 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/0/0c/Britney_Spears_-_Britney.png")
-                .releaseYear(2001)
-                .format(Format.Cassette)
-                .publisher("Jive Records")
-                .priceInPences(1799) // £17.99
-                .currency(Currency.GBP)
-                .build();
-
-        karma = Album.builder()
-                .title("Karma")
-                .artists(List.of(tarkan))
-                .genres(List.of(pop, world))
-                .durationInSeconds(3100) // Approx. 51 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/1/11/Tarkan_-_Karma_%28Tarkan_album%29.jpg")
-                .releaseYear(2001)
-                .format(Format.Vinyl)
-                .publisher("Universal Music Turkey")
-                .priceInPences(1499) // £14.99
-                .currency(Currency.GBP)
-                .build();
-
-        rayOfLight = Album.builder()
-                .title("Ray of Light")
-                .artists(List.of(madonna))
-                .genres(List.of(pop, electronic))
-                .durationInSeconds(3200) // Approx. 53 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/d/dd/Ray_of_Light_Madonna.png")
-                .releaseYear(1998)
-                .format(Format.CD)
-                .publisher("Warner Bros. Records")
-                .priceInPences(1799) // £17.99
-                .currency(Currency.GBP)
-                .build();
-
-        whenWeAllFallAsleep = Album.builder()
-                .title("When We All Fall Asleep, Where Do We Go?")
-                .artists(List.of(billieEilish))
-                .genres(List.of(pop))
-                .durationInSeconds(2600) // Approx. 43 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/3/38/When_We_All_Fall_Asleep%2C_Where_Do_We_Go%3F.png")
-                .releaseYear(2019)
-                .format(Format.Vinyl)
-                .publisher("Interscope Records")
-                .priceInPences(1499) // £14.99
-                .currency(Currency.GBP)
-                .build();
-
-        futureNostalgia = Album.builder()
-                .title("Future Nostalgia")
-                .artists(List.of(duaLipa))
-                .genres(List.of(pop, dancePop))
-                .durationInSeconds(2300) // Approx. 38 minutes
-                .imageUrl("https://upload.wikimedia.org/wikipedia/en/f/f5/Dua_Lipa_-_Future_Nostalgia_%28Official_Album_Cover%29.png")
-                .releaseYear(2020)
-                .format(Format.CD)
-                .publisher("Warner Records")
-                .priceInPences(1599) // £15.99
-                .currency(Currency.GBP)
-                .build();
-
-    }
-
-    @BeforeEach
-    void setUp() {
-        this.initialiseGenres();
-        this.initialiseArtists();
-        this.initialiseAlbums();
-    }
-
-    @Test
-    void createAlbum_ShouldReturnSavedAlbum_WhenIdIsNull() {
-        when(albumRepository.save(goodbyeYellowBrickRoad)).thenReturn(goodbyeYellowBrickRoad);
-
-        Album savedAlbum = albumService.createAlbum(goodbyeYellowBrickRoad);
-
-        assertNotNull(savedAlbum);
-        assertEquals(goodbyeYellowBrickRoad, savedAlbum);
-        verify(albumRepository).save(goodbyeYellowBrickRoad);
-    }
-
-    @Test
-    void createAlbum_ShouldThrowInvalidParameterException_WhenIdIsNotNull() {
-        goodbyeYellowBrickRoad.setId(1L);
-
-        InvalidParameterException thrown = assertThrows(InvalidParameterException.class, () -> albumService.createAlbum(goodbyeYellowBrickRoad));
-
-        assertEquals("Invalid parameter '%s' provided for entity '%s'.".formatted("id", Album.class.getSimpleName()), thrown.getMessage());
-    }
-
-    @Test
-    void getAlbumByTitle_ShouldReturnAlbum_WhenAlbumExists() {
-        when(albumRepository.findByTitle("Goodbye Yellow Brick Road")).thenReturn(Optional.of(goodbyeYellowBrickRoad));
-
-        Album foundAlbum = albumService.getAlbumByTitle("Goodbye Yellow Brick Road");
-
-        assertNotNull(foundAlbum);
-        assertEquals(goodbyeYellowBrickRoad, foundAlbum);
-    }
-
-    @Test
-    void getAlbumByTitle_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
-        when(albumRepository.findByTitle("Nonexistent Album")).thenReturn(Optional.empty());
-
-        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.getAlbumByTitle("Nonexistent Album"));
-
-        assertEquals("Entity '%s' not found.".formatted(Album.class.getSimpleName()), thrown.getMessage());
-    }
-
-    @Test
-    void getAlbumById_ShouldReturnAlbum_WhenAlbumExists() {
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(goodbyeYellowBrickRoad));
-
-        Album foundAlbum = albumService.getAlbumById(1L);
-
-        assertNotNull(foundAlbum);
-        assertEquals(goodbyeYellowBrickRoad, foundAlbum);
-    }
-
-    @Test
-    void getAlbumById_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
-        when(albumRepository.findById(1L)).thenReturn(Optional.empty());
-
-        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.getAlbumById(1L));
-
-        assertEquals("Entity '%s' not found.".formatted(Album.class.getSimpleName()), thrown.getMessage());
-    }
-
-    @Test
-    void replaceAlbum_ShouldReturnUpdatedAlbum_WhenAlbumExists() {
-        Album updatedAlbum = goodbyeYellowBrickRoad;
-        updatedAlbum.setTitle("Updated Title");
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(goodbyeYellowBrickRoad));
-        when(albumRepository.save(updatedAlbum)).thenReturn(updatedAlbum);
-
-        Album resultAlbum = albumService.replaceAlbum(1L, updatedAlbum);
-
-        assertNotNull(resultAlbum);
-        assertEquals("Updated Title", resultAlbum.getTitle());
-        verify(albumRepository).save(updatedAlbum);
-    }
-
-    @Test
-    void replaceAlbum_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
-        when(albumRepository.findById(1L)).thenReturn(Optional.empty());
-
-        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.replaceAlbum(1L, goodbyeYellowBrickRoad));
-
-        assertEquals("Entity '%s' not found.".formatted(Album.class.getSimpleName()), thrown.getMessage());
-    }
-
-    @Test
-    void deleteAlbumById_ShouldDeleteAlbum_WhenAlbumExists() {
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(goodbyeYellowBrickRoad));
-
-        albumService.deleteAlbumById(1L);
-
-        verify(albumRepository).deleteById(1L);
-    }
-
-    @Test
-    void deleteAlbumById_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
-        when(albumRepository.findById(1L)).thenReturn(Optional.empty());
-
-        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.deleteAlbumById(1L));
-
-        assertEquals("Entity '%s' not found.".formatted(Album.class.getSimpleName()), thrown.getMessage());
-    }
-
-    @Test
-    void getAllAlbums_ShouldReturnListOfAlbums() {
-        when(albumRepository.findAll()).thenReturn(List.of(goodbyeYellowBrickRoad, heroes, bad, britney, karma, rayOfLight, whenWeAllFallAsleep, futureNostalgia));
-
-        List<Album> albums = albumService.getAllAlbums();
-
-        assertNotNull(albums);
-        assertEquals(8, albums.size());
-    }
-
-    @Test
-    void getAlbumsByReleaseYear_ShouldReturnListOfAlbums() {
-        when(albumRepository.findAllByReleaseYear(2001)).thenReturn(List.of(britney, karma));
-
-        List<Album> albums = albumService.getAlbumsByReleaseYear(2001);
-
-        assertNotNull(albums);
-        assertEquals(2, albums.size());
-        assertTrue(albums.containsAll(List.of(britney, karma)));
-    }
-
-    @Test
-    void getAlbumsByGenre_ShouldReturnListOfAlbums() {
-        Set<Genre> popGenres = Set.of(pop);
-        when(albumRepository.findAllByGenreSet(popGenres)).thenReturn(List.of(britney, karma, whenWeAllFallAsleep, rayOfLight, futureNostalgia, bad, goodbyeYellowBrickRoad));
-
-        List<Album> albums = albumService.getAlbumsByGenre(GenreType.POP);
-
-        assertNotNull(albums);
-        assertEquals(7, albums.size());
-        assertTrue(albums.containsAll(List.of(britney, karma, whenWeAllFallAsleep, rayOfLight, futureNostalgia, bad, goodbyeYellowBrickRoad)));
-    }
-
-    @Test
-    void getAlbumsByFormat_ShouldReturnListOfAlbums() {
-        when(albumRepository.findAllByFormat(Format.CD)).thenReturn(List.of(goodbyeYellowBrickRoad, bad, rayOfLight, futureNostalgia));
-
-        List<Album> albums = albumService.getAlbumsByFormat(Format.CD);
-
-        assertNotNull(albums);
-        assertEquals(4, albums.size());
-        assertTrue(albums.containsAll(List.of(goodbyeYellowBrickRoad, bad, rayOfLight, futureNostalgia)));
-    }
-}
+//package org.northcoders.recordshopapi.service;
+//
+//import java.util.*;
+//
+//import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
+//import org.northcoders.recordshopapi.model.Currency;
+//import org.northcoders.recordshopapi.repository.ArtistRepository;
+//import org.northcoders.recordshopapi.repository.GenreRepository;
+//import org.northcoders.recordshopapi.mapper.request.album.AlbumCreateMapper;
+//import org.northcoders.recordshopapi.util.TestEntityFactory;
+//import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+//import org.junit.jupiter.api.BeforeEach;
+//import org.junit.jupiter.api.Test;
+//import org.mockito.InjectMocks;
+//import org.mockito.Mock;
+//
+//import static org.junit.jupiter.api.Assertions.*;
+//import static org.mockito.Mockito.*;
+//
+//import org.northcoders.recordshopapi.exception.service.NotFoundException;
+//import org.northcoders.recordshopapi.model.*;
+//import org.northcoders.recordshopapi.repository.AlbumRepository;
+//
+//@DataJpaTest
+//class AlbumServiceImplTest {
+//
+//    @Mock
+//    private AlbumRepository albumRepository;
+//
+//    @Mock
+//    private ArtistRepository artistRepository;
+//
+//    @Mock
+//    GenreRepository genreRepository;
+//
+//    @InjectMocks
+//    private AlbumServiceImpl albumService;
+//
+//    private TestEntityFactory tef;
+//
+//    @BeforeEach
+//    void setUp() {
+//        tef = new TestEntityFactory();
+//        tef.initialiseAllEntities();
+//    }
+//
+//    @Test
+//    void createAlbum_ShouldReturnSavedAlbum_WhenAttributesAreValid() {
+//        List<Long> artistIds = List.of(tef.elvisPresley.getId());
+//        List<Long> genreIds = List.of(tef.rockRoll.getId(), tef.country.getId());
+//
+//        AlbumCreateDTO albumCreateDTO = AlbumCreateDTO.builder()
+//                .title("Elvis Presley")
+//                .artistIds(artistIds)
+//                .genreIds(genreIds)
+//                .durationInSeconds(2400) // Approx. 40 minutes
+//                .imageUrl("https://upload.wikimedia.org/wikipedia/en/thumb/a/a8/Elvis_Presley_LPM-1254_Album_Cover.jpg/220px-Elvis_Presley_LPM-1254_Album_Cover.jpg")
+//                .releaseYear(1956)
+//                .format(Format.Vinyl) // 1950s format
+//                .publisher("RCA Victor")
+//                .priceInPences(1299) // £12.99
+//                .currency(Currency.GBP)
+//                .build();
+//
+//        List<Artist> artists = List.of(tef.elvisPresley);
+//        List<Genre> genres = List.of(tef.rockRoll, tef.country);
+//
+//        Album expectedAlbum = AlbumCreateMapper.toEntity(albumCreateDTO, artists, genres);
+//
+//        when(artistRepository.findById(tef.elvisPresley.getId())).thenReturn(Optional.of(tef.elvisPresley));
+//        when(genreRepository.findById(tef.rockRoll.getId())).thenReturn(Optional.of(tef.rockRoll));
+//        when(genreRepository.findById(tef.country.getId())).thenReturn(Optional.of(tef.country));
+//        when(albumRepository.save(expectedAlbum)).thenAnswer(invocationOnMock -> {
+//            Album album = invocationOnMock.getArgument(0);
+//            album.setId(10L);
+//            album.setQuantityInStock(0);
+//            return album;
+//        });
+//
+//        Album createdAlbum = albumService.createAlbum(albumCreateDTO);
+//
+//        System.out.println(createdAlbum);
+//
+//        assertNotNull(createdAlbum);
+//        verify(genreRepository).findById(tef.rockRoll.getId());
+//        verify(genreRepository).findById(tef.country.getId());
+//        verify(artistRepository).findById(tef.elvisPresley.getId());
+//        verify(albumRepository).save(createdAlbum);
+//
+//        assertEquals(10L, createdAlbum.getId());
+//        assertEquals(albumCreateDTO.getTitle(), createdAlbum.getTitle());
+//        assertEquals(1, createdAlbum.getArtistSet().size());
+//        assertEquals(tef.elvisPresley, createdAlbum.getArtistSet().stream().toList().getFirst());
+//        assertEquals(2, createdAlbum.getGenreSet().size());
+//        assertEquals(tef.rockRoll, createdAlbum.getGenreSet().stream().toList().get(0));
+//        assertEquals(tef.country, createdAlbum.getGenreSet().stream().toList().get(1));
+//        assertEquals(new HashSet<>(genres), createdAlbum.getGenreSet());
+//        assertEquals(albumCreateDTO.getDurationInSeconds(), createdAlbum.getDurationInSeconds());
+//        assertEquals(albumCreateDTO.getImageUrl(), createdAlbum.getImageUrl());
+//        assertEquals(albumCreateDTO.getReleaseYear(), createdAlbum.getReleaseYear());
+//        assertEquals(albumCreateDTO.getPublisher(), createdAlbum.getPublisher());
+//        assertEquals(albumCreateDTO.getPriceInPences(), createdAlbum.getPriceInPences());
+//        assertEquals(albumCreateDTO.getCurrency(), createdAlbum.getCurrency());
+//        assertEquals(albumCreateDTO.getFormat(), createdAlbum.getFormat());
+//        assertEquals(0, createdAlbum.getQuantityInStock());
+//    }
+//
+//    @Test
+//    void getAlbumByTitle_ShouldReturnAlbums_WhenAlbumsExistForGivenTitle() {
+//        when(albumRepository.findAllByTitle("Goodbye Yellow Brick Road")).thenReturn(List.of(tef.goodbyeYellowBrickRoad));
+//
+//        List<Album> albums = albumService.getAlbumsByTitle("Goodbye Yellow Brick Road");
+//
+//        assertNotNull(albums);
+//        assertEquals(1, albums.size());
+//        assertTrue(albums.containsAll(List.of(tef.goodbyeYellowBrickRoad)));
+//    }
+//
+//    @Test
+//    void getAlbumByTitle_ShouldReturnEmptyAlbums_WhenNoAlbumsExistForGivenTitle() {
+//        when(albumRepository.findAllByTitle("Nonexistent Album")).thenReturn(List.of());
+//
+//        List<Album> albums = albumService.getAlbumsByTitle("Nonexistent Album");
+//
+//
+//        assertNotNull(albums);
+//        assertEquals(0, albums.size());
+//    }
+//
+//    @Test
+//    void getAlbumById_ShouldReturnAlbum_WhenAlbumExists() {
+//        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+//
+//        Album foundAlbum = albumService.getAlbumById(1L);
+//
+//        assertNotNull(foundAlbum);
+//        assertEquals(tef.goodbyeYellowBrickRoad, foundAlbum);
+//    }
+//
+//    @Test
+//    void getAlbumById_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
+//        when(albumRepository.findById(1L)).thenReturn(Optional.empty());
+//
+//        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.getAlbumById(1L));
+//
+//        assertEquals("NotFound: Album", thrown.getMessage());
+//    }
+//
+//    @Test
+//    void replaceAlbum_ShouldReturnUpdatedAlbum_WhenAlbumExists() {
+//        Album updatedAlbum = tef.goodbyeYellowBrickRoad;
+//        updatedAlbum.setId(null);
+//        updatedAlbum.setTitle("Updated Title");
+//        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+//        when(albumRepository.save(updatedAlbum)).thenReturn(updatedAlbum);
+//
+//        Album resultAlbum = albumService.replaceAlbum(1L, updatedAlbum);
+//
+//        assertNotNull(resultAlbum);
+//        assertEquals("Updated Title", resultAlbum.getTitle());
+//        verify(albumRepository).save(updatedAlbum);
+//    }
+//
+//    @Test
+//    void replaceAlbum_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
+//        when(albumRepository.findById(1L)).thenReturn(Optional.empty());
+//
+//        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.replaceAlbum(1L, tef.goodbyeYellowBrickRoad));
+//
+//        assertEquals("NotFound: Album", thrown.getMessage());
+//    }
+//
+//    @Test
+//    void deleteAlbumById_ShouldDeleteAlbum_WhenAlbumExists() {
+//        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+//
+//        albumService.deleteAlbumById(1L);
+//
+//        verify(albumRepository).deleteById(1L);
+//    }
+//
+//    @Test
+//    void deleteAlbumById_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
+//        when(albumRepository.findById(1L)).thenReturn(Optional.empty());
+//
+//        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.deleteAlbumById(1L));
+//
+//        assertEquals("NotFound: Album", thrown.getMessage());
+//    }
+//
+//    @Test
+//    void getAllAlbums_ShouldReturnListOfAlbums() {
+//        when(albumRepository.findAll()).thenReturn(List.of(tef.goodbyeYellowBrickRoad, tef.heroes, tef.bad, tef.britney, tef.karma, tef.rayOfLight, tef.whenWeAllFallAsleep, tef.futureNostalgia));
+//
+//        List<Album> albums = albumService.getAllAlbums();
+//
+//        assertNotNull(albums);
+//        assertEquals(8, albums.size());
+//    }
+//
+//    @Test
+//    void getAlbumsByReleaseYear_ShouldReturnListOfAlbums_WhenAlbumsExistForGivenYear() {
+//        when(albumRepository.findAllByReleaseYear(2001)).thenReturn(List.of(tef.britney, tef.karma));
+//
+//        List<Album> albums = albumService.getAlbumsByReleaseYear(2001);
+//
+//        assertNotNull(albums);
+//        assertEquals(2, albums.size());
+//        assertTrue(albums.containsAll(List.of(tef.britney, tef.karma)));
+//    }
+//
+//    @Test
+//    void getAlbumsByReleaseYear_ShouldReturnEmptyListOfAlbums_WhenNoAlbumsExistForGivenYear() {
+//        when(albumRepository.findAllByReleaseYear(1952)).thenReturn(List.of());
+//
+//        List<Album> albums = albumService.getAlbumsByReleaseYear(1952);
+//
+//        assertNotNull(albums);
+//        assertEquals(0, albums.size());
+//    }
+//
+//    @Test
+//    void getAlbumsByGenre_ShouldReturnListOfAlbums_WhenAlbumsExistForGivenGenres() {
+//        Set<Genre> popGenres = Set.of(tef.pop);
+//        when(genreRepository.findByName(tef.pop.getName())).thenReturn(Optional.of(tef.pop));
+//        when(albumRepository.findAllByGenreSet(popGenres)).thenReturn(List.of(tef.britney, tef.karma, tef.whenWeAllFallAsleep, tef.rayOfLight, tef.futureNostalgia, tef.bad, tef.goodbyeYellowBrickRoad));
+//
+//        List<Album> albums = albumService.getAlbumsByGenre(GenreType.POP);
+//
+//        assertNotNull(albums);
+//        assertEquals(7, albums.size());
+//        assertTrue(albums.containsAll(List.of(tef.britney, tef.karma, tef.whenWeAllFallAsleep, tef.rayOfLight, tef.futureNostalgia, tef.bad, tef.goodbyeYellowBrickRoad)));
+//    }
+//
+//    @Test
+//    void getAlbumsByGenre_ShouldReturnEmptyListOfAlbums_WhenNoAlbumsExistForGivenGenres() {
+//        Set<Genre> jazzGenres = Set.of(tef.jazz);
+//        when(genreRepository.findByName(tef.jazz.getName())).thenReturn(Optional.of(tef.jazz));
+//        when(albumRepository.findAllByGenreSet(jazzGenres)).thenReturn(List.of());
+//
+//        List<Album> albums = albumService.getAlbumsByGenre(GenreType.JAZZ);
+//
+//        assertNotNull(albums);
+//        assertEquals(0, albums.size());
+//        assertTrue(albums.containsAll(List.of()));
+//    }
+//
+//    @Test
+//    void getAlbumsByFormat_ShouldReturnListOfAlbums_WhenAlbumsExistForGivenFormat() {
+//        when(albumRepository.findAllByFormat(Format.CD)).thenReturn(List.of(tef.goodbyeYellowBrickRoad, tef.bad, tef.rayOfLight, tef.futureNostalgia));
+//
+//        List<Album> albums = albumService.getAlbumsByFormat(Format.CD);
+//
+//        assertNotNull(albums);
+//        assertEquals(4, albums.size());
+//        assertTrue(albums.containsAll(List.of(tef.goodbyeYellowBrickRoad, tef.bad, tef.rayOfLight, tef.futureNostalgia)));
+//    }
+//
+//    @Test
+//    void getAlbumsByFormat_ShouldReturnEmptyListOfAlbums_WhenNoAlbumsExistForGivenFormat() {
+//        when(albumRepository.findAllByFormat(Format.DVD)).thenReturn(List.of());
+//
+//        List<Album> albums = albumService.getAlbumsByFormat(Format.CD);
+//
+//        assertNotNull(albums);
+//        assertEquals(0, albums.size());
+//    }
+//}

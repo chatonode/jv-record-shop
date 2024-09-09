@@ -1,5 +1,7 @@
 package org.northcoders.recordshopapi.service;
 
+import org.northcoders.recordshopapi.dto.request.artist.ArtistCreateDTO;
+import org.northcoders.recordshopapi.dto.response.artist.ArtistResponseDTO;
 import org.northcoders.recordshopapi.model.Artist;
 import org.springframework.stereotype.Service;
 
@@ -7,9 +9,13 @@ import java.util.List;
 
 public interface ArtistService {
 
-    List<Artist> getAllArtists();
+    List<ArtistResponseDTO> getAllArtists();
 
-    List<Artist> getArtistsByName(String fullName);
+    List<ArtistResponseDTO> getArtistsByName(String fullName);
 
-    Artist getArtistById(Long id); // OR NotFoundException
+    ArtistResponseDTO getArtistById(Long id); // OR NotFoundException
+
+    ArtistResponseDTO createArtist(ArtistCreateDTO artistCreateDTO);
+
+    void deleteArtistById(Long id);
 }
