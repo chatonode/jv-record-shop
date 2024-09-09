@@ -1,7 +1,8 @@
-package org.northcoders.recordshopapi.util.repository;
+package org.northcoders.recordshopapi.util.service;
 
 import org.northcoders.recordshopapi.model.*;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -25,54 +26,74 @@ public class TestEntityFactory {
                 .fullName("Elton John")
                 .albums(List.of())
                 .build();
-//        eltonJohn.setId(currentArtistId.incrementAndGet());
+        eltonJohn.setId(currentArtistId.incrementAndGet());
+        eltonJohn.setCreatedDate(new Date());
+        eltonJohn.setUpdatedDate(new Date());
+
         davidBowie = Artist.builder()
                 .fullName("David Bowie")
                 .albums(List.of())
                 .build();
-//        davidBowie.setId(currentArtistId.incrementAndGet());
+        davidBowie.setId(currentArtistId.incrementAndGet());
+        davidBowie.setCreatedDate(new Date());
+        davidBowie.setUpdatedDate(new Date());
 
         michaelJackson = Artist.builder()
                 .fullName("Michael Jackson")
                 .albums(List.of())
                 .build();
-//        michaelJackson.setId(currentArtistId.incrementAndGet());
+        michaelJackson.setId(currentArtistId.incrementAndGet());
+        michaelJackson.setCreatedDate(new Date());
+        michaelJackson.setUpdatedDate(new Date());
 
         britneySpears = Artist.builder()
                 .fullName("Britney Spears")
                 .albums(List.of())
                 .build();
-//        britneySpears.setId(currentArtistId.incrementAndGet());
+        britneySpears.setId(currentArtistId.incrementAndGet());
+        britneySpears.setCreatedDate(new Date());
+        britneySpears.setUpdatedDate(new Date());
 
         tarkan = Artist.builder()
                 .fullName("Tarkan")
                 .albums(List.of())
                 .build();
-//        tarkan.setId(currentArtistId.incrementAndGet());
+        tarkan.setId(currentArtistId.incrementAndGet());
+        tarkan.setCreatedDate(new Date());
+        tarkan.setUpdatedDate(new Date());
 
         madonna = Artist.builder()
                 .fullName("Madonna")
                 .albums(List.of())
                 .build();
-//        madonna.setId(currentArtistId.incrementAndGet());
+        madonna.setId(currentArtistId.incrementAndGet());
+        madonna.setCreatedDate(new Date());
+        madonna.setUpdatedDate(new Date());
 
         billieEilish = Artist.builder()
                 .fullName("Billie Eilish")
                 .albums(List.of())
                 .build();
-//        billieEilish.setId(currentArtistId.incrementAndGet());
+        billieEilish.setId(currentArtistId.incrementAndGet());
+        billieEilish.setCreatedDate(new Date());
+        billieEilish.setUpdatedDate(new Date());
 
         duaLipa = Artist.builder()
                 .fullName("Dua Lipa")
                 .albums(List.of())
                 .build();
-//        duaLipa.setId(currentArtistId.incrementAndGet());
+        duaLipa.setId(currentArtistId.incrementAndGet());
+        duaLipa.setCreatedDate(new Date());
+        duaLipa.setUpdatedDate(new Date());
 
         elvisPresley = Artist.builder()
                 .fullName("Elvis Presley")
                 .albums(List.of())
                 .build();
+        // Leave it for creation test
 //        elvisPresley.setId(currentArtistId.incrementAndGet());
+//        elvisPresley.setCreatedDate(new Date());
+//        elvisPresley.setUpdatedDate(new Date());
     }
 
     private void createGenres() {
@@ -80,54 +101,70 @@ public class TestEntityFactory {
         rock = Genre.builder()
                 .name(GenreType.ROCK)
                 .build();
-//        rock.setId(currentGenreId.incrementAndGet());
-//        rock.setAlbumSet(new HashSet<>());
+        rock.setId(currentGenreId.incrementAndGet());
+        rock.setAlbumSet(new HashSet<>());
+        rock.setCreatedDate(new Date());
+        rock.setUpdatedDate(new Date());
 
         pop = Genre.builder()
                 .name(GenreType.POP)
                 .build();
-//        pop.setId(currentGenreId.incrementAndGet());
-//        pop.setAlbumSet(new HashSet<>());
+        pop.setId(currentGenreId.incrementAndGet());
+        pop.setAlbumSet(new HashSet<>());
+        pop.setCreatedDate(new Date());
+        pop.setUpdatedDate(new Date());
 
         dancePop = Genre.builder()
                 .name(GenreType.DANCE_POP)
                 .build();
-//        dancePop.setId(currentGenreId.incrementAndGet());
-//        dancePop.setAlbumSet(new HashSet<>());
+        dancePop.setId(currentGenreId.incrementAndGet());
+        dancePop.setAlbumSet(new HashSet<>());
+        dancePop.setCreatedDate(new Date());
+        dancePop.setUpdatedDate(new Date());
 
         electronic = Genre.builder()
                 .name(GenreType.ELECTRONIC)
                 .build();
-//        electronic.setId(currentGenreId.incrementAndGet());
-//        electronic.setAlbumSet(new HashSet<>());
+        electronic.setId(currentGenreId.incrementAndGet());
+        electronic.setAlbumSet(new HashSet<>());
+        electronic.setCreatedDate(new Date());
+        electronic.setUpdatedDate(new Date());
 
         funk = Genre.builder()
                 .name(GenreType.FUNK)
                 .build();
-//        funk.setId(currentGenreId.incrementAndGet());
-//        funk.setAlbumSet(new HashSet<>());
+        funk.setId(currentGenreId.incrementAndGet());
+        funk.setAlbumSet(new HashSet<>());
+        funk.setCreatedDate(new Date());
+        funk.setUpdatedDate(new Date());
 
         world = Genre.builder()
                 .name(GenreType.WORLD)
                 .build();
-//        world.setId(currentGenreId.incrementAndGet());
-//        world.setAlbumSet(new HashSet<>());
+        world.setId(currentGenreId.incrementAndGet());
+        world.setAlbumSet(new HashSet<>());
+        world.setCreatedDate(new Date());
+        world.setUpdatedDate(new Date());
 
         jazz = Genre.builder()
                 .name(GenreType.JAZZ)
                 .build(); // No Albums own this genre
-//        jazz.setId(currentGenreId.incrementAndGet());
-//        jazz.setAlbumSet(new HashSet<>());
+        jazz.setId(currentGenreId.incrementAndGet());
+        jazz.setAlbumSet(new HashSet<>());
+        jazz.setCreatedDate(new Date());
+        jazz.setUpdatedDate(new Date());
 
         rockRoll = Genre.builder()
                 .name(GenreType.ROCK_ROLL)
                 .build();
+        // Leave it for creation test
 //        rockRoll.setId(currentGenreId.incrementAndGet());
 //        rockRoll.setAlbumSet(new HashSet<>());
 
         country = Genre.builder()
                 .name(GenreType.COUNTRY)
                 .build();
+        // Leave it for creation test
 //        country.setId(currentGenreId.incrementAndGet());
 //        country.setAlbumSet(new HashSet<>());
     }
@@ -146,8 +183,10 @@ public class TestEntityFactory {
                 .priceInPences(1999) // £19.99
                 .currency(Currency.GBP)
                 .build();
-//        goodbyeYellowBrickRoad.setId(currentAlbumId.incrementAndGet());
-//        goodbyeYellowBrickRoad.setQuantityInStock(0);
+        goodbyeYellowBrickRoad.setId(currentAlbumId.incrementAndGet());
+        goodbyeYellowBrickRoad.setQuantityInStock(0);
+        goodbyeYellowBrickRoad.setCreatedDate(new Date());
+        goodbyeYellowBrickRoad.setUpdatedDate(new Date());
 
         heroes = Album.builder()
                 .title("Heroes")
@@ -161,8 +200,10 @@ public class TestEntityFactory {
                 .priceInPences(1799) // £17.99
                 .currency(Currency.GBP)
                 .build();
-//        heroes.setId(currentAlbumId.incrementAndGet());
-//        heroes.setQuantityInStock(0);
+        heroes.setId(currentAlbumId.incrementAndGet());
+        heroes.setQuantityInStock(0);
+        heroes.setCreatedDate(new Date());
+        heroes.setUpdatedDate(new Date());
 
         bad = Album.builder()
                 .title("Bad")
@@ -176,8 +217,10 @@ public class TestEntityFactory {
                 .priceInPences(1899) // £18.99
                 .currency(Currency.GBP)
                 .build();
-//        bad.setId(currentAlbumId.incrementAndGet());
-//        bad.setQuantityInStock(0);
+        bad.setId(currentAlbumId.incrementAndGet());
+        bad.setQuantityInStock(0);
+        bad.setCreatedDate(new Date());
+        bad.setUpdatedDate(new Date());
 
         britney = Album.builder()
                 .title("Britney")
@@ -191,8 +234,10 @@ public class TestEntityFactory {
                 .priceInPences(1799) // £17.99
                 .currency(Currency.GBP)
                 .build();
-//        britney.setId(currentAlbumId.incrementAndGet());
-//        britney.setQuantityInStock(0);
+        britney.setId(currentAlbumId.incrementAndGet());
+        britney.setQuantityInStock(0);
+        britney.setCreatedDate(new Date());
+        britney.setUpdatedDate(new Date());
 
         karma = Album.builder()
                 .title("Karma")
@@ -206,8 +251,10 @@ public class TestEntityFactory {
                 .priceInPences(1499) // £14.99
                 .currency(Currency.GBP)
                 .build();
-//        karma.setId(currentAlbumId.incrementAndGet());
-//        karma.setQuantityInStock(0);
+        karma.setId(currentAlbumId.incrementAndGet());
+        karma.setQuantityInStock(0);
+        karma.setCreatedDate(new Date());
+        karma.setUpdatedDate(new Date());
 
         rayOfLight = Album.builder()
                 .title("Ray of Light")
@@ -221,8 +268,10 @@ public class TestEntityFactory {
                 .priceInPences(1799) // £17.99
                 .currency(Currency.GBP)
                 .build();
-//        rayOfLight.setId(currentAlbumId.incrementAndGet());
-//        rayOfLight.setQuantityInStock(0);
+        rayOfLight.setId(currentAlbumId.incrementAndGet());
+        rayOfLight.setQuantityInStock(0);
+        rayOfLight.setCreatedDate(new Date());
+        rayOfLight.setUpdatedDate(new Date());
 
         whenWeAllFallAsleep = Album.builder()
                 .title("When We All Fall Asleep, Where Do We Go?")
@@ -236,8 +285,10 @@ public class TestEntityFactory {
                 .priceInPences(1499) // £14.99
                 .currency(Currency.GBP)
                 .build();
-//        whenWeAllFallAsleep.setId(currentAlbumId.incrementAndGet());
-//        whenWeAllFallAsleep.setQuantityInStock(0);
+        whenWeAllFallAsleep.setId(currentAlbumId.incrementAndGet());
+        whenWeAllFallAsleep.setQuantityInStock(0);
+        whenWeAllFallAsleep.setCreatedDate(new Date());
+        whenWeAllFallAsleep.setUpdatedDate(new Date());
 
         futureNostalgia = Album.builder()
                 .title("Future Nostalgia")
@@ -251,8 +302,10 @@ public class TestEntityFactory {
                 .priceInPences(1599) // £15.99
                 .currency(Currency.GBP)
                 .build();
-//        futureNostalgia.setId(currentAlbumId.incrementAndGet());
-//        futureNostalgia.setQuantityInStock(2);
+        futureNostalgia.setId(currentAlbumId.incrementAndGet());
+        futureNostalgia.setQuantityInStock(2);
+        futureNostalgia.setCreatedDate(new Date());
+        futureNostalgia.setUpdatedDate(new Date());
     }
 
     public void initialiseAllEntities() {
@@ -262,8 +315,8 @@ public class TestEntityFactory {
     }
 
     public TestEntityFactory() {
-        currentArtistId = new AtomicLong(9L);
-        currentGenreId = new AtomicLong(9L);
-        currentAlbumId = new AtomicLong(8L);
+        currentArtistId = new AtomicLong(0L);
+        currentGenreId = new AtomicLong(0L);
+        currentAlbumId = new AtomicLong(0L);
     }
 }
