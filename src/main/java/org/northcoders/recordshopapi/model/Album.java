@@ -28,7 +28,7 @@ public class Album {
     private String title;
 
     @Column(nullable = false)
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "albums_artists",
             joinColumns = @JoinColumn(name = "album_id"),
@@ -36,7 +36,7 @@ public class Album {
     private Set<Artist> artistSet;
 
     @Column(nullable = false)
-    @ManyToMany(cascade = CascadeType.PERSIST) // During creations?
+    @ManyToMany(cascade = CascadeType.ALL) // During creations?
     @JoinTable(
             name = "albums_genres",
             joinColumns = @JoinColumn(name = "album_id"),
@@ -90,5 +90,8 @@ public class Album {
         this.quantityInStock = 0;
         this.priceInPences = priceInPences;
         this.currency = currency;
+
+        this.createdDate = new Date();
+        this.updatedDate = this.createdDate;
     }
 }

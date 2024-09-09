@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ArtistCreateMapperTest {
 
@@ -97,7 +98,8 @@ public class ArtistCreateMapperTest {
 
         // Assert
         assertEquals(artistCreateDTO.getFullName(), artist.getFullName());
-        assertEquals(albums, artist.getAlbumSet().stream().collect(Collectors.toList())); // Verify list conversion to Set
+        assertTrue(artist.getAlbumSet().stream().collect(Collectors.toList()).contains(album1));
+        assertTrue(artist.getAlbumSet().stream().collect(Collectors.toList()).contains(album2));
     }
 
 

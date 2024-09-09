@@ -40,5 +40,8 @@ public class Genre {
     public Genre(GenreType name) {
         this.name = name;
         this.albumSet = new HashSet<>();
+
+        this.createdDate = new Date();
+        this.updatedDate = this.createdDate;
     }
 }
