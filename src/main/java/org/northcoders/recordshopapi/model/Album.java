@@ -90,5 +90,8 @@ public class Album {
         this.quantityInStock = 0;
         this.priceInPences = priceInPences;
         this.currency = currency;
+
+        this.createdDate = new Date();
+        this.updatedDate = this.createdDate;
     }
 }

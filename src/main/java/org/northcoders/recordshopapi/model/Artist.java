@@ -43,5 +43,8 @@ public class Artist {
     public Artist(String fullName, List<Album> albums) {
         this.fullName = fullName;
         this.albumSet = new HashSet<>(albums);
+
+        this.createdDate = new Date();
+        this.updatedDate = this.createdDate;
     }
 }
