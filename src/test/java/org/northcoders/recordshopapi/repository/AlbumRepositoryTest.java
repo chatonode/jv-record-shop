@@ -1,12 +1,13 @@
 package org.northcoders.recordshopapi.repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.northcoders.recordshopapi.util.TestEntityFactory;
+import org.northcoders.recordshopapi.util.repository.TestEntityFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -61,14 +62,10 @@ class AlbumRepositoryTest {
 
         assertNotNull(actualAlbum);
 
-        assertNotEquals(album.getId(), actualAlbum.getId());
-        assertNotEquals(null, actualAlbum.getId());
-        assertNotEquals(tef.currentAlbumId.get(), actualAlbum.getId());
-        assertEquals(tef.currentAlbumId.intValue() + 1, actualAlbum.getId().intValue());
-
-        assertNotEquals(album.getCreatedDate(), actualAlbum.getCreatedDate());
-        assertNotEquals(null, actualAlbum.getCreatedDate());
-//        assertEquals(1, actualAlbum.getCreatedDate()); // TODO
+        assertNotNull(actualAlbum.getId());
+        assertNotNull(actualAlbum.getCreatedDate());
+        assertNotNull(actualAlbum.getUpdatedDate());
+        assertNotNull(actualAlbum.getQuantityInStock());
     }
 
     @Test

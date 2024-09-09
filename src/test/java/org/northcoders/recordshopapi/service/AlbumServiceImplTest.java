@@ -7,7 +7,7 @@
 //import org.northcoders.recordshopapi.repository.ArtistRepository;
 //import org.northcoders.recordshopapi.repository.GenreRepository;
 //import org.northcoders.recordshopapi.mapper.request.album.AlbumCreateMapper;
-//import org.northcoders.recordshopapi.util.TestEntityFactory;
+//import org.northcoders.recordshopapi.util.repository.TestEntityFactory;
 //import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 //import org.junit.jupiter.api.BeforeEach;
 //import org.junit.jupiter.api.Test;
