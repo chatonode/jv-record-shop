@@ -1,6 +1,7 @@
 package org.northcoders.recordshopapi.controller;
 
 import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
+import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
 import org.northcoders.recordshopapi.model.Album;
 import org.northcoders.recordshopapi.model.Format;
 import org.northcoders.recordshopapi.model.GenreType;
@@ -24,31 +25,31 @@ public class AlbumController {
     AlbumService albumService;
 
     @GetMapping
-    public ResponseEntity<SuccessPayload> getAllAlbums(
+    public ResponseEntity<SuccessPayload> getAlbums(
             @RequestParam(required = false, name = "year") Integer releaseYear,
             @RequestParam(required = false, name = "title") String title,
             @RequestParam(required = false, name = "genre") GenreType genreType,
             @RequestParam(required = false, name = "format") Format format
     ) {
-        List<Album> albums = new ArrayList<>();
+        List<AlbumResponseDTO> albums = new ArrayList<>();
 
         if (releaseYear != null) {
-            List<Album> albumsWithReleaseYear = albumService.getAlbumsByReleaseYear(releaseYear);
+            List<AlbumResponseDTO> albumsWithReleaseYear = albumService.getAlbumsByReleaseYear(releaseYear);
 
             albums.addAll(albumsWithReleaseYear);
         } else if (title != null) {
-            List<Album> albumsWithTitle = albumService.getAlbumsByTitle(title);
+            List<AlbumResponseDTO> albumsWithTitle = albumService.getAlbumsByTitle(title);
 
             albums.addAll(albumsWithTitle);
         } else if (genreType != null) {
-            List<Album> albumsWithGenreType = albumService.getAlbumsByGenre(genreType);
+            List<AlbumResponseDTO> albumsWithGenreType = albumService.getAlbumsByGenre(genreType);
 
             albums.addAll(albumsWithGenreType);
         } else if (format != null) {
-            List<Album> albumsWithFormat = albumService.getAlbumsByFormat(format);
+            List<AlbumResponseDTO> albumsWithFormat = albumService.getAlbumsByFormat(format);
             albums.addAll(albumsWithFormat);
         } else {
-            List<Album> allAlbums = albumService.getAllAlbums();
+            List<AlbumResponseDTO> allAlbums = albumService.getAllAlbums();
             albums.addAll(allAlbums);
         }
 
@@ -59,7 +60,7 @@ public class AlbumController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SuccessPayload> getAlbumById(@PathVariable String id) {
-        Album album = albumService.getAlbumById(Long.parseLong(id));
+        AlbumResponseDTO album = albumService.getAlbumById(Long.parseLong(id));
 
         SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Fetched, Album.class, album);
 
@@ -68,7 +69,7 @@ public class AlbumController {
 
     @PostMapping
     public ResponseEntity<SuccessPayload> createAlbum(@RequestBody @Validated AlbumCreateDTO albumCreateDTO) {
-        Album createdAlbum = albumService.createAlbum(albumCreateDTO);
+        AlbumResponseDTO createdAlbum = albumService.createAlbum(albumCreateDTO);
 
         SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Created, Album.class, createdAlbum);
 
@@ -77,7 +78,7 @@ public class AlbumController {
 
     @PutMapping("/{id}")
     public ResponseEntity<SuccessPayload> replaceAlbum(@PathVariable String id, @RequestBody Album album) {
-        Album replacedAlbum = albumService.replaceAlbum(Long.parseLong(id), album);
+        AlbumResponseDTO replacedAlbum = albumService.replaceAlbum(Long.parseLong(id), album);
 
         SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Updated, Album.class, replacedAlbum);
 

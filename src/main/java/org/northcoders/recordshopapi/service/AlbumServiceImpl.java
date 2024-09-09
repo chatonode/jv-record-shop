@@ -1,20 +1,21 @@
 package org.northcoders.recordshopapi.service;
 
 import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
+import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
 import org.northcoders.recordshopapi.exception.service.InvalidParameterException;
 import org.northcoders.recordshopapi.exception.service.NotFoundException;
+import org.northcoders.recordshopapi.mapper.response.AlbumResponseMapper;
 import org.northcoders.recordshopapi.model.*;
 import org.northcoders.recordshopapi.repository.AlbumRepository;
 import org.northcoders.recordshopapi.repository.ArtistRepository;
 import org.northcoders.recordshopapi.repository.GenreRepository;
-import org.northcoders.recordshopapi.util.mapper.AlbumCreateMapper;
+import org.northcoders.recordshopapi.mapper.request.album.AlbumCreateMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class AlbumServiceImpl implements AlbumService {
@@ -28,51 +29,69 @@ public class AlbumServiceImpl implements AlbumService {
     GenreRepository genreRepository;
 
     @Override
-    public List<Album> getAllAlbums() {
+    public List<AlbumResponseDTO> getAllAlbums() {
         List<Album> albums = new ArrayList<>();
 
         albumRepository.findAll().forEach(albums::add);
 
-        return albums;
+        System.out.println("before: "+ albums);
+
+        List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
+        System.out.println("after: "+ albumResponseDTOs);
+
+        return albumResponseDTOs;
     }
 
     @Override
-    public List<Album> getAlbumsByReleaseYear(Integer releaseYear) {
-        return albumRepository.findAllByReleaseYear(releaseYear);
+    public List<AlbumResponseDTO> getAlbumsByReleaseYear(Integer releaseYear) {
+        List<Album> albums = albumRepository.findAllByReleaseYear(releaseYear);
+
+        List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
+
+        return albumResponseDTOs;
     }
 
     @Override
-    public List<Album> getAlbumsByTitle(String title) {
-        return albumRepository.findAllByTitle(title);
+    public List<AlbumResponseDTO> getAlbumsByTitle(String title) {
+        List<Album> albums = albumRepository.findAllByTitle(title);
+
+        List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
+
+        return albumResponseDTOs;
     }
 
     @Override
-    public List<Album> getAlbumsByGenre(GenreType genre) {
+    public List<AlbumResponseDTO> getAlbumsByGenre(GenreType genre) {
         Genre foundGenre = genreRepository.findByName(genre).orElseThrow(() -> new NotFoundException(Genre.class));
 
-        return albumRepository.findAllByGenreSet(Set.of(foundGenre));
+        List<Album> albums = albumRepository.findAllByGenreSet(Set.of(foundGenre));
+
+
+        List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
+
+        return albumResponseDTOs;
     }
 
     @Override
-    public List<Album> getAlbumsByFormat(Format format) {
-        return albumRepository.findAllByFormat(format);
+    public List<AlbumResponseDTO> getAlbumsByFormat(Format format) {
+        List<Album> albums = albumRepository.findAllByFormat(format);
+
+        List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
+
+        return albumResponseDTOs;
     }
 
     @Override
-    public Album getAlbumById(Long id) {
-        return albumRepository.findById(id).orElseThrow(() -> new NotFoundException(Album.class));
+    public AlbumResponseDTO getAlbumById(Long id) {
+        Album album = albumRepository.findById(id).orElseThrow(() -> new NotFoundException(Album.class));
+
+        AlbumResponseDTO albumResponseDTO = AlbumResponseMapper.toDTO(album);
+
+        return albumResponseDTO;
     }
 
-//    @Override
-//    public Album createAlbum(AlbumCreateDTO albumDTO) {
-////        if (album.getId() != null) {
-////            throw new InvalidParameterException(Album.class, "id");
-////        }
-//
-//        return albumRepository.save(album);
-//    }
 
-    public Album createAlbum(AlbumCreateDTO albumCreateDTO) {
+    public AlbumResponseDTO createAlbum(AlbumCreateDTO albumCreateDTO) {
         List<Artist> artists = albumCreateDTO.getArtistIds().stream()
                 .map(artistId -> artistRepository.findById(artistId).orElseThrow(() -> new NotFoundException(Artist.class)))
                 .toList();
@@ -82,11 +101,16 @@ public class AlbumServiceImpl implements AlbumService {
                 .toList();
 
         Album album = AlbumCreateMapper.toEntity(albumCreateDTO, artists, genres);
-        return albumRepository.save(album);
+
+        Album createdAlbum = albumRepository.save(album);
+
+        AlbumResponseDTO albumResponseDTO = AlbumResponseMapper.toDTO(createdAlbum);
+
+        return albumResponseDTO;
     }
 
     @Override
-    public Album replaceAlbum(Long id, Album album) {
+    public AlbumResponseDTO replaceAlbum(Long id, Album album) {
         Album foundAlbum = albumRepository.findById(id).orElseThrow(() -> new NotFoundException(Album.class));
 
         if (album.getId() != null) {
@@ -136,7 +160,11 @@ public class AlbumServiceImpl implements AlbumService {
             foundAlbum.setFormat(album.getFormat());
         }
 
-        return albumRepository.save(foundAlbum);
+        Album updatedAlbum = albumRepository.save(foundAlbum);
+
+        AlbumResponseDTO albumResponseDTO = AlbumResponseMapper.toDTO(updatedAlbum);
+
+        return albumResponseDTO;
     }
 
     @Override
@@ -148,7 +176,7 @@ public class AlbumServiceImpl implements AlbumService {
 
 //    private Artist findOrCreateArtist(AlbumCreateArtistDTO albumCreateArtistDTO) {
 //        return artistRepository.findByNameAndBirthdate(albumCreateArtistDTO.getName(), albumCreateArtistDTO.getBirthdate())
-//                .orElseGet(() -> artistRepository.save(ArtistMapper.toEntity(albumCreateArtistDTO)));
+//                .orElseGet(() -> artistRepository.save(ArtistCreateMapper.toEntity(albumCreateArtistDTO)));
 //    }
 //
 //    private Genre findOrCreateGenre(GenreDTO genreDTO) {

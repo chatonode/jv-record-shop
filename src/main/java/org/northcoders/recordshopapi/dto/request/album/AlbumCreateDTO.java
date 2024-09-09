@@ -51,6 +51,6 @@ public class AlbumCreateDTO {
     private Currency currency;
 
 //    @NotNull(message = "Stock quantity is required")
-    @Min(value = 0, message = "Quantity in stock cannot be negative")
-    private Integer quantityInStock;
+//    @Min(value = 0, message = "Quantity in stock cannot be negative")
+//    private Integer quantityInStock;
 }

@@ -3,9 +3,10 @@ package org.northcoders.recordshopapi.repository;
 import java.util.List;
 import java.util.Set;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.northcoders.recordshopapi.util.TestDataFactory;
+import org.northcoders.recordshopapi.util.TestEntityFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
@@ -15,7 +16,7 @@ import org.northcoders.recordshopapi.model.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
-class AlbumRepositoryTestDataFactory extends TestDataFactory {
+class AlbumRepositoryTest {
 
     @Autowired
     private AlbumRepository albumRepository;
@@ -23,28 +24,30 @@ class AlbumRepositoryTestDataFactory extends TestDataFactory {
     @Autowired
     private GenreRepository genreRepository;
 
-    public AlbumRepositoryTestDataFactory() {
-        super();
-    }
+    private TestEntityFactory tef;
 
     @BeforeEach
     void setUp() {
-        this.initialiseAlbums();
-        this.initialiseGenres();
-        this.initialiseArtists();
+        tef = new TestEntityFactory();
+        tef.initialiseAllEntities();
 
         // Saves all nested artists and genres altogether thanks to CascadeType.ALL
         albumRepository.saveAll(List.of(
-                goodbyeYellowBrickRoad, heroes, bad, britney, karma, rayOfLight, whenWeAllFallAsleep, futureNostalgia
+                tef.goodbyeYellowBrickRoad, tef.heroes, tef.bad, tef.britney, tef.karma, tef.rayOfLight, tef.whenWeAllFallAsleep, tef.futureNostalgia
         ));
+    }
+
+    @AfterEach
+    void tearDown() {
+        albumRepository.deleteAll();
     }
 
     @Test
     void save_setsNullAttributesToValues() {
         Album album = Album.builder()
                 .title("Elvis Presley")
-                .artists(List.of(elvisPresley)) // Predefined artist object
-                .genres(List.of(rockRoll, country)) // Predefined genres
+                .artists(List.of(tef.elvisPresley)) // Predefined artist object
+                .genres(List.of(tef.rockRoll, tef.country)) // Predefined genres
                 .durationInSeconds(2400) // Approx. 40 minutes
                 .imageUrl("https://upload.wikimedia.org/wikipedia/en/thumb/a/a8/Elvis_Presley_LPM-1254_Album_Cover.jpg/220px-Elvis_Presley_LPM-1254_Album_Cover.jpg")
                 .releaseYear(1956)
@@ -60,17 +63,17 @@ class AlbumRepositoryTestDataFactory extends TestDataFactory {
 
         assertNotEquals(album.getId(), actualAlbum.getId());
         assertNotEquals(null, actualAlbum.getId());
-        assertNotEquals(currentAlbumId.get(), actualAlbum.getId());
-        assertEquals(currentAlbumId.intValue() + 1, actualAlbum.getId().intValue());
+        assertNotEquals(tef.currentAlbumId.get(), actualAlbum.getId());
+        assertEquals(tef.currentAlbumId.intValue() + 1, actualAlbum.getId().intValue());
 
         assertNotEquals(album.getCreatedDate(), actualAlbum.getCreatedDate());
         assertNotEquals(null, actualAlbum.getCreatedDate());
-        assertEquals(, actualAlbum.getCreatedDate());
+//        assertEquals(1, actualAlbum.getCreatedDate()); // TODO
     }
 
     @Test
     void findAllByReleaseYear_ShouldReturnAlbums_WhenAlbumsExistForGivenYear() {
-        List<Album> expectedAlbumsFrom2001 = List.of(britney, karma);
+        List<Album> expectedAlbumsFrom2001 = List.of(tef.britney, tef.karma);
 
         List<Album> actualAlbumsFrom2001 = albumRepository.findAllByReleaseYear(2001);
 
@@ -91,7 +94,7 @@ class AlbumRepositoryTestDataFactory extends TestDataFactory {
 
     @Test
     void findAllByTitle_ShouldReturnAlbums_WhenAlbumExists() {
-        List<Album> expectedAlbums = List.of(goodbyeYellowBrickRoad);
+        List<Album> expectedAlbums = List.of(tef.goodbyeYellowBrickRoad);
 
 
         List<Album> actualAlbums = albumRepository.findAllByTitle("Goodbye Yellow Brick Road");
@@ -113,8 +116,8 @@ class AlbumRepositoryTestDataFactory extends TestDataFactory {
 
     @Test
     void findAllByGenreSet_ShouldReturnAlbums_WhenAlbumsExistForGivenGenres() {
-        Set<Genre> popGenreSet = Set.of(pop);
-        List<Album> expectedAlbums = List.of(britney, karma, whenWeAllFallAsleep, rayOfLight, futureNostalgia, bad, goodbyeYellowBrickRoad);
+        Set<Genre> popGenreSet = Set.of(tef.pop);
+        List<Album> expectedAlbums = List.of(tef.britney, tef.karma, tef.whenWeAllFallAsleep, tef.rayOfLight, tef.futureNostalgia, tef.bad, tef.goodbyeYellowBrickRoad);
 
         List<Album> actualAlbums = albumRepository.findAllByGenreSet(popGenreSet);
 
@@ -125,11 +128,11 @@ class AlbumRepositoryTestDataFactory extends TestDataFactory {
 
     @Test
     void findAllByGenreSet_ShouldReturnEmptyAlbums_WhenNoAlbumsExistForGivenGenres() {
-        Set<Genre> nonexistentGenreSet = Set.of(jazz);
+        Set<Genre> nonexistentGenreSet = Set.of(tef.jazz);
         // since it is not saved within an album
         //   CascadeType.PERSIST or any other CascadeType won't work.
         //   So, we need to save it manually before actually searching with it.
-        genreRepository.save(jazz);
+        genreRepository.save(tef.jazz);
 
         List<Album> expectedAlbums = List.of();
 
@@ -169,7 +172,7 @@ class AlbumRepositoryTestDataFactory extends TestDataFactory {
     @Test
     void findAllByFormat_ShouldReturnAlbums_WhenAlbumsExistForGivenFormat() {
         Format cdFormat = Format.CD;
-        List<Album> expectedAlbums = List.of(goodbyeYellowBrickRoad, bad, rayOfLight, futureNostalgia);
+        List<Album> expectedAlbums = List.of(tef.goodbyeYellowBrickRoad, tef.bad, tef.rayOfLight, tef.futureNostalgia);
 
         List<Album> actualAlbums = albumRepository.findAllByFormat(cdFormat);
 

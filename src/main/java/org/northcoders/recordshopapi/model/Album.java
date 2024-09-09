@@ -28,7 +28,7 @@ public class Album {
     private String title;
 
     @Column(nullable = false)
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "albums_artists",
             joinColumns = @JoinColumn(name = "album_id"),
@@ -36,7 +36,7 @@ public class Album {
     private Set<Artist> artistSet;
 
     @Column(nullable = false)
-    @ManyToMany(cascade = CascadeType.ALL) // During creations?
+    @ManyToMany(cascade = CascadeType.PERSIST) // During creations?
     @JoinTable(
             name = "albums_genres",
             joinColumns = @JoinColumn(name = "album_id"),

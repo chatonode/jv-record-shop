@@ -7,9 +7,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
-@Component
 public class GenreResponseMapper {
-    public GenreResponseDTO toDTO(Genre genre) {
+    public static GenreResponseDTO toDTO(Genre genre) {
         return GenreResponseDTO.builder()
                 .id(genre.getId())
                 .name(genre.getName())

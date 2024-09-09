@@ -4,13 +4,11 @@ import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
 import org.northcoders.recordshopapi.dto.response.album.FlattenedArtistDTO;
 import org.northcoders.recordshopapi.dto.response.album.FlattenedGenreDTO;
 import org.northcoders.recordshopapi.model.Album;
-import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
-@Component
 public class AlbumResponseMapper {
-    public AlbumResponseDTO toDTO(Album album) {
+    public static AlbumResponseDTO toDTO(Album album) {
         return AlbumResponseDTO.builder()
                 .id(album.getId())
                 .title(album.getTitle())

@@ -5,17 +5,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.northcoders.recordshopapi.dto.response.artist.ArtistResponseDTO;
 import org.northcoders.recordshopapi.model.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
 import java.util.List;
 
-@SpringBootTest
 class ArtistResponseMapperTest {
-
-    @Autowired
-    private ArtistResponseMapper artistResponseMapper;
 
     @Test
     void toDTO_mapsArtistEntityToArtistResponseDTO() {
@@ -46,7 +40,7 @@ class ArtistResponseMapperTest {
         artist.setUpdatedDate(new Date());
 
         // Act: Call the toDTO method
-        ArtistResponseDTO artistResponseDTO = artistResponseMapper.toDTO(artist);
+        ArtistResponseDTO artistResponseDTO = ArtistResponseMapper.toDTO(artist);
 
         // Assert: Verify that the mapping is correct
         assertEquals(artist.getId(), artistResponseDTO.id());

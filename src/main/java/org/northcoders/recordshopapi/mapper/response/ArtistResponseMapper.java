@@ -3,14 +3,12 @@ package org.northcoders.recordshopapi.mapper.response;
 import org.northcoders.recordshopapi.dto.response.artist.ArtistResponseDTO;
 import org.northcoders.recordshopapi.dto.response.artist.FlattenedAlbumDTO;
 import org.northcoders.recordshopapi.model.Artist;
-import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
-@Component
 public class ArtistResponseMapper {
 
-    public ArtistResponseDTO toDTO(Artist artist) {
+    public static ArtistResponseDTO toDTO(Artist artist) {
         return ArtistResponseDTO.builder()
                 .id(artist.getId())
                 .fullName(artist.getFullName())

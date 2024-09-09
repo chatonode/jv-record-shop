@@ -12,17 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 import java.util.Date;
 
-@SpringBootTest
 class AlbumResponseMapperTest {
-
-    @Autowired
-    private AlbumResponseMapper albumResponseMapper;
-
-    @BeforeEach
-    void setUp() {
-
-    }
-
     @Test
     void toDTO_mapsAlbumEntityToAlbumResponseDTO() {
         // Arrange
@@ -60,7 +50,7 @@ class AlbumResponseMapperTest {
         album.setUpdatedDate(new Date());
 
         // Act: Call the toDTO method
-        AlbumResponseDTO albumResponseDTO = albumResponseMapper.toDTO(album);
+        AlbumResponseDTO albumResponseDTO = AlbumResponseMapper.toDTO(album);
 
         // Assert: Verify that the mapping is correct
         assertEquals(album.getId(), albumResponseDTO.id());

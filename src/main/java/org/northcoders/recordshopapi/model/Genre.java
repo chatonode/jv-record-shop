@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -38,5 +39,6 @@ public class Genre {
     @Builder
     public Genre(GenreType name) {
         this.name = name;
+        this.albumSet = new HashSet<>();
     }
 }

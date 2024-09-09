@@ -3,10 +3,7 @@ package org.northcoders.recordshopapi.mapper.response;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.northcoders.recordshopapi.dto.response.genre.GenreResponseDTO;
-import org.northcoders.recordshopapi.dto.response.genre.FlattenedAlbumDTO;
 import org.northcoders.recordshopapi.model.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -14,11 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 class GenreResponseMapperTest {
-
-    @Autowired
-    private GenreResponseMapper genreResponseMapper;
 
     @Test
     void toDTO_mapsGenreEntityToGenreResponseDTO() {
@@ -49,7 +42,7 @@ class GenreResponseMapperTest {
         genre.setUpdatedDate(new Date());
 
         // Act: Call the toDTO method
-        GenreResponseDTO genreResponseDTO = genreResponseMapper.toDTO(genre);
+        GenreResponseDTO genreResponseDTO = GenreResponseMapper.toDTO(genre);
 
         // Assert: Verify that the mapping is correct
         assertEquals(genre.getId(), genreResponseDTO.id());
