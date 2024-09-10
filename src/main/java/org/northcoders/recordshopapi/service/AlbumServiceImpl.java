@@ -34,10 +34,7 @@ public class AlbumServiceImpl implements AlbumService {
 
         albumRepository.findAll().forEach(albums::add);
 
-        System.out.println("before: "+ albums);
-
         List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
-        System.out.println("after: "+ albumResponseDTOs);
 
         return albumResponseDTOs;
     }
