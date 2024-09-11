@@ -51,22 +51,36 @@ Customize your application settings using the properties files in `src/main/reso
 - **`application-dev.properties`**: Development environment settings with **PostgreSQL** connection
 - **`application-prod.properties`**: Production settings for **AWS RDS**
 
-### Testing, Packaging & Deploying
-#### 1. Testing
+
+## Test, Build, and Deploy
+### 1. Testing
+
 1. Switch profile to `test` in `application.properties`
 2. Run `mvn test` to see all tests (including `repository` tests) **PASS**
 
-#### 2. Packaging
+### 2. Build
+#### 2.1. Maven JAR
+
+After **ensuring all tests pass** with `test` profile:
+
 1. Switch profile back to `prod` in `application.properties`
 2. `mvn package -D skipTests`
-   - The Maven build process will generate a JAR file inside the `target/` directory
+   - The Maven build process will generate a JAR file inside the `target/` directory.
 
-#### 2.1. Local Dockerisation
+#### 2.2. Docker Image
+
 1. `docker build -t recordshopapi:1.0 .`
    - Prepend `sudo` to this `docker` command if it does not work
 2. Verify that the image was created by listing all available Docker images with `docker images`
+3. Run the container with:
+   - ```bash
+     docker run -p 8080:8080 recordshopapi:1.0
+     ```
 
-### 3. Deploying to AWS Elastic Beanstalk
+4. Open a browser or Postman and access the application at `http://localhost:8080` to ensure it is running properly.
+
+### 3. Deploy: AWS Elastic Beanstalk
+
 1. Open the project directory in your file explorer (do not compress the folder, just the contents).
 2. Select all the files and directories inside the project root (where your `Dockerfile`, `pom.xml`, etc., are located).
 3. Right-click and select **Compress** (on Mac) or **Send to > Compressed (zipped)** folder (on Windows).
@@ -79,15 +93,15 @@ Customize your application settings using the properties files in `src/main/reso
 
 ### 4. Interact with Your Application
 #### 4.1. Access Swagger UI
+
 1- To access the Swagger UI of your deployed application:
    - Go to: `http://<your-app-domain>/api/v1/swagger-ui/index.html`
 
 This will allow you to interact with your API documentation directly in the browser.
 
-
 ### 5. Congrats!
 
-You have successfully deployed your Spring Boot application in Docker on AWS Elastic Beanstalk. You can now access and interact with the API through Postman or the Swagger UI using the domain provided by AWS.
+You can now access and interact with the API through Postman or the Swagger UI using the domain provided by AWS.
 
 ## 📚 Project Structure
 
