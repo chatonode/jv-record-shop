@@ -13,7 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>recordshopapi</name>
     <description>A Spring Boot-based API for managing a record shop; by utilising Spring Boot Web, Spring Data JPA,
-        PostgreSQL for production, and H2 for testing
+        Amazon RDS, PostgreSQL for production, runs on an AWS Elastic Beanstalk app, and uses H2 for testing
     </description>
     <url/>
     <licenses>
@@ -86,5 +86,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

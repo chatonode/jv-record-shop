@@ -46,25 +46,24 @@ Before diving into the project, ensure you have the following installed:
 
 Customize your application settings using the properties files in `src/main/resources`:
 
-- **`application.properties`**: Holds active profile (as `prod`) and **Swagger UI** url path info 
+- **`application.properties`**: Holds **Swagger UI** url path info, and logging configurations
 - **`application-test.properties`**: Testing configurations with **H2** database, select this one as an active profile in the application
 - **`application-dev.properties`**: Development environment settings with **PostgreSQL** connection
 - **`application-prod.properties`**: Production settings for **AWS RDS**
 
-
-## Test, Build, and Deploy
+## Test, Build, Dockerise, and Deploy
 ### 1. Testing
 
-1. Switch profile to `test` in `application.properties`
+1. Run `mvn clean` to clean previous build history.
 2. Run `mvn test` to see all tests (including `repository` tests) **PASS**
+   - `test` profile with `h2` database is going to be processed by `default`.
 
 ### 2. Build
 #### 2.1. Maven JAR
 
 After **ensuring all tests pass** with `test` profile:
 
-1. Switch profile back to `prod` in `application.properties`
-2. `mvn package -D skipTests`
+1. `mvn package -Dspring.profiles.active=prod -DskipTests`
    - The Maven build process will generate a JAR file inside the `target/` directory.
 
 #### 2.2. Docker Image
@@ -87,8 +86,8 @@ After **ensuring all tests pass** with `test` profile:
 4. This will create a `.zip` file containing the project contents.
    - **Important**: Do not compress the parent folder itself; AWS Elastic Beanstalk expects the zipped contents, not a single directory.
 5. Click **Choose file** on your AWS Elastic Beanstalk application installation and upload the `.zip` file you created in the previous step.
-6. Create your AWS Elastic Beanstalk application on your AWS dashboard.
-   - AWS Elastic Beanstalk will take a few minutes to launch your environment. You can track progress in the Elastic Beanstalk dashboard.
+6. Create/Update your AWS Elastic Beanstalk application on your AWS dashboard.
+   - AWS Elastic Beanstalk will take a few minutes to launch/re-launch your environment. You can track progress in the Elastic Beanstalk dashboard.
    - Once the deployment is successful, you will see a message: **Environment successfully launched.**
 
 ### 4. Interact with Your Application
@@ -131,9 +130,9 @@ To protect your API endpoints and secure user data, we plan to integrate Spring 
 
 ## 🔄 Continuous Integration (CI)
 
-We use GitHub Actions for continuous integration to ensure code quality and reliability.
+We use **GitHub Actions** workflow for continuous integration to ensure code quality and reliability.
 
-This configuration ensures that every pull request is tested, helping maintain a high standard of code quality.
+This configuration ensures that **every pull request** is tested, helping maintain a high standard of code quality.
 
 ## 📜 Contributing
 
