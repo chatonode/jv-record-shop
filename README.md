@@ -2,7 +2,7 @@
 
 Welcome to the Record Shop API, where the rhythm of your favorite albums, artists, and genres come alive through a sleek and efficient RESTful service. Designed with the latest technologies and best practices in mind, this API is your digital record store, built to scale and secure your musical treasures.
 
-> [Live Demo - Swagger UI](http://record-shop-api-env.eba-k7juhuv2.eu-west-2.elasticbeanstalk.com/api/v1/swagger-ui/index.html)
+> [Live Demo - Swagger UI](http://record-shop-api-env.eba-nahrmp8h.eu-west-2.elasticbeanstalk.com/api/v1/swagger-ui/index.html)
 
 ## 🚀 Getting Started
 
@@ -51,8 +51,7 @@ Customize your application settings using the properties files in `src/main/reso
 - **`application-dev.properties`**: Development environment settings with **PostgreSQL** connection
 - **`application-prod.properties`**: Production settings for **AWS RDS**
 
-
-## Test, Build, and Deploy
+## Optional: Test, Build, and Deploy
 ### 1. Testing
 
 1. Switch profile to `test` in `application.properties`
@@ -64,7 +63,7 @@ Customize your application settings using the properties files in `src/main/reso
 After **ensuring all tests pass** with `test` profile:
 
 1. Switch profile back to `prod` in `application.properties`
-2. `mvn package -D skipTests`
+2. `mvn package -DskipTests`
    - The Maven build process will generate a JAR file inside the `target/` directory.
 
 #### 2.2. Docker Image
