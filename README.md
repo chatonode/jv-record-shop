@@ -2,7 +2,7 @@
 
 Welcome to the Record Shop API, where the rhythm of your favorite albums, artists, and genres come alive through a sleek and efficient RESTful service. Designed with the latest technologies and best practices in mind, this API is your digital record store, built to scale and secure your musical treasures.
 
-> [Live Demo - Swagger UI](http://record-shop-api-env.eba-k7juhuv2.eu-west-2.elasticbeanstalk.com/api/v1/swagger-ui/index.html)
+> [Live Demo - Swagger UI](http://record-shop-api-env.eba-jbxvdjrd.eu-west-2.elasticbeanstalk.com/api/v1/swagger-ui/index.html)
 
 ## 🚀 Getting Started
 
