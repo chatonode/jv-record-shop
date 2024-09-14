@@ -10,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.URL;
 
 import org.northcoders.recordshopapi.model.*;
+import org.northcoders.recordshopapi.validation.constraints.NullOrNotBlank;
 
 @Data
 @Getter
@@ -38,6 +39,7 @@ public class AlbumCreateDTO {
     @Min(value = 1900, message = "Invalid release year")  // Can be used without @NotNull if release year is allowed to be null
     private Integer releaseYear;
 
+    @NullOrNotBlank(message = "If provided, publisher is required")
     private String publisher;
 
     @NotNull(message = "Format is required")
