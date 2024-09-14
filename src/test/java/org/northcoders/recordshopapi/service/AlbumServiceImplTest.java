@@ -3,6 +3,7 @@ package org.northcoders.recordshopapi.service;
 import java.util.*;
 
 import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
+import org.northcoders.recordshopapi.dto.request.album.AlbumUpdateDTO;
 import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
 import org.northcoders.recordshopapi.mapper.response.AlbumResponseMapper;
 import org.northcoders.recordshopapi.model.Currency;
@@ -181,27 +182,97 @@ class AlbumServiceImplTest {
     }
 
     @Test
-    void replaceAlbum_ShouldReturnUpdatedAlbum_WhenAlbumExists() {
-        Album albumToUpdate = tef.goodbyeYellowBrickRoad;
-        albumToUpdate.setId(null);
-        albumToUpdate.setTitle("Updated Title");
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
-        when(albumRepository.save(albumToUpdate)).thenReturn(albumToUpdate);
+    void updateAlbum_ShouldReturnUpdatedAlbum_WhenAlbumExists() {
+        AlbumUpdateDTO updateDTO = new AlbumUpdateDTO();
+        updateDTO.setTitle("Updated Title");
 
-        AlbumResponseDTO updatedAlbum = albumService.replaceAlbum(1L, albumToUpdate);
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+        when(albumRepository.save(any(Album.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        AlbumResponseDTO updatedAlbum = albumService.updateAlbum(1L, updateDTO);
 
         assertNotNull(updatedAlbum);
         assertEquals("Updated Title", updatedAlbum.title());
-        verify(albumRepository).save(albumToUpdate);
+        verify(albumRepository).save(any(Album.class));
     }
 
     @Test
-    void replaceAlbum_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
+    void updateAlbum_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
+        AlbumUpdateDTO updateDTO = new AlbumUpdateDTO();
+        updateDTO.setTitle("Updated Title");
+
         when(albumRepository.findById(1L)).thenReturn(Optional.empty());
 
-        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.replaceAlbum(1L, tef.goodbyeYellowBrickRoad));
+        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.updateAlbum(1L, updateDTO));
 
         assertEquals("NotFound: Album", thrown.getMessage());
+        verify(albumRepository, never()).save(any(Album.class));
+    }
+
+    @Test
+    void updateAlbum_ShouldThrowNotFoundException_WhenArtistDoesNotExist() {
+        AlbumUpdateDTO updateDTO = new AlbumUpdateDTO();
+        updateDTO.setArtistIds(List.of(1L));
+
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+        when(artistRepository.findById(1L)).thenReturn(Optional.empty());
+
+        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.updateAlbum(1L, updateDTO));
+
+        assertEquals("NotFound: Artist", thrown.getMessage());
+        verify(albumRepository, never()).save(any(Album.class));
+    }
+
+    @Test
+    void updateAlbum_ShouldThrowNotFoundException_WhenGenreDoesNotExist() {
+        AlbumUpdateDTO updateDTO = new AlbumUpdateDTO();
+        updateDTO.setGenreIds(List.of(1L));
+
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+        when(genreRepository.findById(1L)).thenReturn(Optional.empty());
+
+        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.updateAlbum(1L, updateDTO));
+
+        assertEquals("NotFound: Genre", thrown.getMessage());
+        verify(albumRepository, never()).save(any(Album.class));
+    }
+
+    @Test
+    void updateAlbum_ShouldUpdateAlbum_WhenArtistAndGenreArePresent() {
+        AlbumUpdateDTO updateDTO = new AlbumUpdateDTO();
+        updateDTO.setTitle("Updated Title");
+        updateDTO.setArtistIds(List.of(1L));
+        updateDTO.setGenreIds(List.of(1L));
+
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+        when(artistRepository.findById(1L)).thenReturn(Optional.of(tef.eltonJohn));
+        when(genreRepository.findById(1L)).thenReturn(Optional.of(tef.pop));
+        when(albumRepository.save(any(Album.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        AlbumResponseDTO updatedAlbum = albumService.updateAlbum(1L, updateDTO);
+
+        assertNotNull(updatedAlbum);
+        assertEquals("Updated Title", updatedAlbum.title());
+        assertEquals(1, updatedAlbum.artists().size());
+        assertEquals(1, updatedAlbum.genres().size());
+        verify(albumRepository).save(any(Album.class));
+    }
+
+    @Test
+    void updateAlbum_ShouldHandleNullArtistsAndGenres() {
+        AlbumUpdateDTO updateDTO = new AlbumUpdateDTO();
+        updateDTO.setTitle("Updated Title");
+        updateDTO.setArtistIds(null);
+        updateDTO.setGenreIds(null);
+
+        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+        when(albumRepository.save(any(Album.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        AlbumResponseDTO updatedAlbum = albumService.updateAlbum(1L, updateDTO);
+
+        assertNotNull(updatedAlbum);
+        assertEquals("Updated Title", updatedAlbum.title());
+        verify(albumRepository).save(any(Album.class));
     }
 
     @Test
@@ -312,4 +383,6 @@ class AlbumServiceImplTest {
         assertNotNull(albums);
         assertEquals(0, albums.size());
     }
+
+
 }

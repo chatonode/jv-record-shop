@@ -1,6 +1,7 @@
 package org.northcoders.recordshopapi.service;
 
 import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
+import org.northcoders.recordshopapi.dto.request.album.AlbumUpdateDTO;
 import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
 import org.northcoders.recordshopapi.model.*;
 
@@ -12,18 +13,18 @@ public interface AlbumService {
 
     List<AlbumResponseDTO> getAlbumsByReleaseYear(Integer releaseYear);
 
-    List<AlbumResponseDTO> getAlbumsByTitle(String title); // OR NotFoundException
+    List<AlbumResponseDTO> getAlbumsByTitle(String title);
 
     List<AlbumResponseDTO> getAlbumsByGenre(GenreType genre);
 
     List<AlbumResponseDTO> getAlbumsByFormat(Format format);
 
-    AlbumResponseDTO getAlbumById(Long id); // OR NotFoundException
+    AlbumResponseDTO getAlbumById(Long id);
 
-    AlbumResponseDTO createAlbum(AlbumCreateDTO albumCreateDTO); // OR InvalidParameterException
+    AlbumResponseDTO createAlbum(AlbumCreateDTO albumCreateDTO);
 
-    AlbumResponseDTO replaceAlbum(Long id, Album album); // OR NotFoundException
+    AlbumResponseDTO updateAlbum(Long id, AlbumUpdateDTO album);
 
-    void deleteAlbumById(Long id); // OR NotFoundException
+    void deleteAlbumById(Long id);
 
 }
