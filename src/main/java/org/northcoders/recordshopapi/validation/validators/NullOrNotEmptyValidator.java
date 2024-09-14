@@ -1,7 +1,8 @@
-package org.northcoders.recordshopapi.validation.constraints;
+package org.northcoders.recordshopapi.validation.validators;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import org.northcoders.recordshopapi.validation.constraints.NullOrNotEmpty;
 
 import java.util.ArrayList;
 

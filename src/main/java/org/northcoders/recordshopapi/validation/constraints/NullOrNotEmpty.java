@@ -2,6 +2,7 @@ package org.northcoders.recordshopapi.validation.constraints;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import org.northcoders.recordshopapi.validation.validators.NullOrNotEmptyValidator;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
