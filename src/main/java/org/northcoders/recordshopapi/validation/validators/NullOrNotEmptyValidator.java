@@ -4,9 +4,10 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.northcoders.recordshopapi.validation.constraints.NullOrNotEmpty;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public class NullOrNotEmptyValidator implements ConstraintValidator<NullOrNotEmpty, ArrayList<?>> {
+public class NullOrNotEmptyValidator implements ConstraintValidator<NullOrNotEmpty, List<?>> {
+
 
     @Override
     public void initialize(NullOrNotEmpty constraintAnnotation) {
@@ -14,7 +15,7 @@ public class NullOrNotEmptyValidator implements ConstraintValidator<NullOrNotEmp
     }
 
     @Override
-    public boolean isValid(ArrayList<?> objects, ConstraintValidatorContext constraintValidatorContext) {
-        return objects == null || objects.size() > 1;
+    public boolean isValid(List<?> objects, ConstraintValidatorContext constraintValidatorContext) {
+        return objects == null || !objects.isEmpty();
     }
 }

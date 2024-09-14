@@ -23,7 +23,7 @@ public class AlbumUpdateDTO {
     @NullOrNotEmpty(message = "If provided, at least one artist id is required")
     private List<Long> artistIds;
 
-    @NullOrNotEmpty(message = "If provided, at least one artist id is required")
+    @NullOrNotEmpty(message = "If provided, at least one genre id is required")
     private List<Long> genreIds;
 
     @Min(value = 30, message = "Duration must be at least 30 seconds")
@@ -35,7 +35,7 @@ public class AlbumUpdateDTO {
     @Min(value = 1900, message = "Invalid release year")
     private Integer releaseYear;
 
-    @NullOrNotBlank(message = "Publisher can either be null or has non-blank value")
+    @NullOrNotBlank(message = "If provided, publisher is required")
     private String publisher;
 
     private Format format;
