@@ -403,6 +403,11 @@ class AlbumServiceImplTest {
         }
 
         @Test
+        void createAlbum_ShouldReturnCreatedAlbum_WhenValidDTOIsProvided() {
+            // TODO
+        }
+
+        @Test
         void updateAlbum_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
             AlbumUpdateDTO updateDTO = AlbumUpdateDTO.builder().title("Updated Title").build();
 
