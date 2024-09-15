@@ -13,7 +13,7 @@ public interface ArtistService {
 
     List<ArtistResponseDTO> getArtistsByName(String fullName);
 
-    ArtistResponseDTO getArtistById(Long id); // OR NotFoundException
+    ArtistResponseDTO getArtistById(Long id);
 
     ArtistResponseDTO createArtist(ArtistCreateDTO artistCreateDTO);
 
