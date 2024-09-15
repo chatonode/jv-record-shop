@@ -9,6 +9,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
 import org.northcoders.recordshopapi.dto.request.album.AlbumUpdateDTO;
+import org.northcoders.recordshopapi.dto.request.artist.ArtistCreateDTO;
 import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
 import org.northcoders.recordshopapi.dto.response.album.FlattenedArtistDTO;
 import org.northcoders.recordshopapi.dto.response.album.FlattenedGenreDTO;
@@ -406,6 +407,36 @@ class AlbumServiceImplTest {
 //        assertEquals(0, createdAlbumDto.quantityInStock());
 //    }
 
+
+        @Test
+        void createAlbum_ShouldThrowNotFoundException_WhenArtistIdDoesNotExist() {
+            AlbumCreateDTO createDTO = AlbumCreateDTO.builder()
+                    .title("Renaissance")
+                    .artistIds(List.of(15L))
+                    .genreIds(List.of(tef.dancePop.getId(), tef.electronic.getId(), tef.world.getId()))
+                    .durationInSeconds(3600) // Approx. 60 minutes
+                    .imageUrl("https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png")
+                    .releaseYear(2022)
+                    .format(Format.CD)
+                    .publisher("Columbia Records")
+                    .priceInPences(1799) // £17.99
+                    .currency(Currency.GBP)
+                    .build();
+
+            when(artistRepository.findById(15L)).thenReturn(Optional.empty());
+            try (MockedStatic<AlbumCreateMapper> reqUtilities = Mockito.mockStatic(AlbumCreateMapper.class);
+                 MockedStatic<AlbumResponseMapper> resUtilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.createAlbum(createDTO));
+
+                assertEquals("NotFound: Artist", thrown.getMessage());
+
+                verify(artistRepository, times(1)).findById(15L);
+                verify(genreRepository, never()).findById(any(Long.class));
+                reqUtilities.verify(() -> AlbumCreateMapper.toEntity(any(AlbumCreateDTO.class), Mockito.<List<Artist>>any(), Mockito.<List<Genre>>any()), never());
+                verify(albumRepository, never()).save(any(Album.class));
+                resUtilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), never());
+            }
+        }
 
         @Test
         void updateAlbum_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {

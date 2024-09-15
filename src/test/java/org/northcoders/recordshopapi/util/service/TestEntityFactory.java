@@ -23,6 +23,7 @@ public class TestEntityFactory {
     public Artist eltonJohn, davidBowie, michaelJackson, britneySpears, tarkan, madonna, billieEilish, duaLipa;
     public ArtistResponseDTO eltonJohnResponseDTO, davidBowieResponseDTO, michaelJacksonResponseDTO, britneySpearsResponseDTO,
             tarkanResponseDTO, madonnaResponseDTO, billieEilishResponseDTO, duaLipaResponseDTO;
+    public Artist beyonce; // id: 9L
 
     public Genre rock, pop, dancePop, electronic, funk, world, jazz;
     public GenreResponseDTO rockResponseDTO, popResponseDTO, dancePopResponseDTO, electronicResponseDTO, funkResponseDTO, worldResponseDTO, jazzResponseDTO;
@@ -63,6 +64,7 @@ public class TestEntityFactory {
         madonna = createArtist("Madonna");
         billieEilish = createArtist("Billie Eilish");
         duaLipa = createArtist("Dua Lipa");
+        beyonce = createArtist("Beyoncé"); // Album-less Artist
     }
     private void initializeGenres() {
         rock = createGenre(GenreType.ROCK);
@@ -71,7 +73,7 @@ public class TestEntityFactory {
         electronic = createGenre(GenreType.ELECTRONIC);
         funk = createGenre(GenreType.FUNK);
         world = createGenre(GenreType.WORLD);
-        jazz = createGenre(GenreType.JAZZ); // No Albums own this genre
+        jazz = createGenre(GenreType.JAZZ); // Album-less Genre
     }
     private void initializeAlbums() {
 
