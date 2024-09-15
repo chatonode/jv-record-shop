@@ -498,6 +498,50 @@ class AlbumServiceImplTest {
         }
 
         @Test
+        void updateAlbum_ShouldUpdateMultipleFields_WhenAlbumExists() {
+            AlbumUpdateDTO updateDTO = AlbumUpdateDTO.builder()
+                    .title("Updated Title")
+                    .priceInPences(3000)
+                    .releaseYear(1999)
+                    .currency(Currency.EUR)
+                    .quantityInStock(17)
+                    .build();
+
+            Album updatedGoodbyeYellowBrickRoad = tef.goodbyeYellowBrickRoad;
+            updatedGoodbyeYellowBrickRoad.setTitle(updateDTO.getTitle());
+            updatedGoodbyeYellowBrickRoad.setPriceInPences(updateDTO.getPriceInPences());
+            updatedGoodbyeYellowBrickRoad.setReleaseYear(updateDTO.getReleaseYear());
+            updatedGoodbyeYellowBrickRoad.setCurrency(updateDTO.getCurrency());
+            updatedGoodbyeYellowBrickRoad.setQuantityInStock(updateDTO.getQuantityInStock());
+
+
+            AlbumResponseDTO updatedGoodbyeYellowBrickRoadResponseDTO = TestEntityFactory.createAlbumResponseDTO(updatedGoodbyeYellowBrickRoad);
+
+            when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+            when(albumRepository.save(any(Album.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                utilities.when(() -> AlbumResponseMapper.toDTO(updatedGoodbyeYellowBrickRoad)).thenReturn(updatedGoodbyeYellowBrickRoadResponseDTO);
+
+                AlbumResponseDTO updatedAlbum = albumService.updateAlbum(1L, updateDTO);
+
+                verify(albumRepository, times(1)).findById(1L);
+                verify(artistRepository, never()).findById(any(Long.class));
+                verify(genreRepository, never()).findById(any(Long.class));
+                verify(albumRepository, times(1)).save(any(Album.class));
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), times(1));
+
+                assertNotNull(updatedAlbum);
+                assertEquals(1L, updatedAlbum.id());
+                assertEquals("Updated Title", updatedAlbum.title());
+                assertEquals(3000, updatedAlbum.priceInPences());
+                assertEquals(1999, updatedAlbum.releaseYear());
+                assertEquals(Currency.EUR, updatedAlbum.currency());
+                assertEquals(17, updatedAlbum.quantityInStock());
+            }
+        }
+
+        @Test
         void updateAlbum_ShouldReturnUpdatedAlbum_WhenGivenArtistsGenresAreNull() {
             AlbumUpdateDTO updateDTO = AlbumUpdateDTO.builder()
                     .title("Updated Title")
