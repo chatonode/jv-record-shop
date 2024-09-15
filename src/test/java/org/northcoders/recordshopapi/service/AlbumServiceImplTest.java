@@ -347,6 +347,62 @@ class AlbumServiceImplTest {
         }
 
         @Test
+        void createAlbum_ShouldThrowNotFoundException_WhenGenreIdDoesNotExist() {
+            AlbumCreateDTO createDTO = AlbumCreateDTO.builder()
+                    .title("Renaissance")
+                    .artistIds(List.of(9L))
+                    .genreIds(List.of(15L))
+                    .durationInSeconds(3600) // Approx. 60 minutes
+                    .imageUrl("https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png")
+                    .releaseYear(2022)
+                    .format(Format.CD)
+                    .publisher("Columbia Records")
+                    .priceInPences(1799) // £17.99
+                    .currency(Currency.GBP)
+                    .build();
+
+            when(artistRepository.findById(9L)).thenReturn(Optional.of(tef.beyonce));
+            when(genreRepository.findById(15L)).thenReturn(Optional.empty());
+            try (MockedStatic<AlbumCreateMapper> reqUtilities = Mockito.mockStatic(AlbumCreateMapper.class);
+                 MockedStatic<AlbumResponseMapper> resUtilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.createAlbum(createDTO));
+
+                assertEquals("NotFound: Genre", thrown.getMessage());
+
+                verify(artistRepository, times(1)).findById(9L);
+                verify(genreRepository, times(1)).findById(15L);
+                reqUtilities.verify(() -> AlbumCreateMapper.toEntity(any(AlbumCreateDTO.class), Mockito.<List<Artist>>any(), Mockito.<List<Genre>>any()), never());
+                verify(albumRepository, never()).save(any(Album.class));
+                resUtilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), never());
+            }
+        }
+
+        @Test
+        void createAlbum_ShouldHandleOptionalFields_WhenOptionalFieldsAreNull() {
+            // TODO
+        }
+
+        @Test
+        void createAlbum_ShouldReturnCreatedAlbum_WhenImageUrlIsValid() {
+            // TODO
+        }
+
+        @Test
+        void createAlbum_ShouldSetCreatedAndUpdatedDates_WhenAlbumIsCreated() {
+            // TODO
+        }
+
+        @Test
+        void createAlbum_ShouldReturnCreatedAlbum_WhenQuantityInStockIsZero() {
+            // TODO
+        }
+
+        @Test
+        void createAlbum_ShouldMapArtistsAndGenresCorrectly_WhenValidDTOIsProvided() {
+            // TODO
+        }
+
+        @Test
         void updateAlbum_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
             AlbumUpdateDTO updateDTO = AlbumUpdateDTO.builder().title("Updated Title").build();
 
