@@ -36,6 +36,10 @@ public class AlbumServiceImpl implements AlbumService {
 
         albumRepository.findAll().forEach(albums::add);
 
+        if (albums.isEmpty()) {
+            return List.of();
+        }
+
         List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
 
         return albumResponseDTOs;
@@ -45,6 +49,10 @@ public class AlbumServiceImpl implements AlbumService {
     public List<AlbumResponseDTO> getAlbumsByReleaseYear(Integer releaseYear) {
         List<Album> albums = albumRepository.findAllByReleaseYear(releaseYear);
 
+        if (albums.isEmpty()) {
+            return List.of();
+        }
+
         List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
 
         return albumResponseDTOs;
@@ -53,6 +61,10 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public List<AlbumResponseDTO> getAlbumsByTitle(String title) {
         List<Album> albums = albumRepository.findAllByTitle(title);
+
+        if (albums.isEmpty()) {
+            return List.of();
+        }
 
         List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
 
@@ -65,6 +77,9 @@ public class AlbumServiceImpl implements AlbumService {
 
         List<Album> albums = albumRepository.findAllByGenreSet(Set.of(foundGenre));
 
+        if (albums.isEmpty()) {
+            return List.of();
+        }
 
         List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
 
@@ -74,6 +89,10 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public List<AlbumResponseDTO> getAlbumsByFormat(Format format) {
         List<Album> albums = albumRepository.findAllByFormat(format);
+
+        if (albums.isEmpty()) {
+            return List.of();
+        }
 
         List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
 
@@ -88,7 +107,6 @@ public class AlbumServiceImpl implements AlbumService {
 
         return albumResponseDTO;
     }
-
 
     public AlbumResponseDTO createAlbum(AlbumCreateDTO albumCreateDTO) {
         List<Artist> artists = albumCreateDTO.getArtistIds().stream()

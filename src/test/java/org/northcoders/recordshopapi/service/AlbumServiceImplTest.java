@@ -1,10 +1,17 @@
 package org.northcoders.recordshopapi.service;
 
 import java.util.*;
+import java.util.stream.Stream;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Nested;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
 import org.northcoders.recordshopapi.dto.request.album.AlbumUpdateDTO;
 import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
+import org.northcoders.recordshopapi.dto.response.album.FlattenedArtistDTO;
+import org.northcoders.recordshopapi.dto.response.album.FlattenedGenreDTO;
 import org.northcoders.recordshopapi.mapper.response.AlbumResponseMapper;
 import org.northcoders.recordshopapi.model.Currency;
 import org.northcoders.recordshopapi.repository.ArtistRepository;
@@ -45,10 +52,269 @@ class AlbumServiceImplTest {
     void setUp() {
         tef = new TestEntityFactory();
         tef.initialiseAllEntities();
+        tef.initializeAlbumResponseDTOs();
 
     }
 
-//    @Test
+    @AfterEach
+    void tearDown() {
+//        ...
+    }
+
+
+    @Nested
+    class AlbumReadOps {
+        @Test
+        void getAllAlbums_ShouldReturnEmptyListOfAlbums_WhenNoAlbumExists() {
+            when(albumRepository.findAll()).thenReturn(List.of());
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                List<AlbumResponseDTO> albums = albumService.getAllAlbums();
+
+                verify(albumRepository, times(1)).findAll();
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), never());
+
+                assertNotNull(albums);
+                assertEquals(0, albums.size());
+            }
+        }
+
+        @Test
+        void getAllAlbums_ShouldReturnListOfAlbums_WhenAlbumsExist() {
+            when(albumRepository.findAll()).thenReturn(List.of(tef.goodbyeYellowBrickRoad, tef.heroes, tef.bad, tef.britney,
+                    tef.karma, tef.rayOfLight, tef.whenWeAllFallAsleep, tef.futureNostalgia));
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.goodbyeYellowBrickRoad)).thenReturn(tef.goodbyeYellowBrickRoadResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.heroes)).thenReturn(tef.heroesResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.bad)).thenReturn(tef.badResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.britney)).thenReturn(tef.britneyResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.karma)).thenReturn(tef.karmaResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.rayOfLight)).thenReturn(tef.rayOfLightResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.whenWeAllFallAsleep)).thenReturn(tef.whenWeAllFallAsleepResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.futureNostalgia)).thenReturn(tef.futureNostalgiaResponseDTO);
+
+                List<AlbumResponseDTO> albums = albumService.getAllAlbums();
+
+                verify(albumRepository, times(1)).findAll();
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), times(8));
+
+                assertNotNull(albums);
+                assertEquals(8, albums.size());
+                assertTrue(albums.containsAll(List.of(tef.goodbyeYellowBrickRoadResponseDTO, tef.heroesResponseDTO, tef.badResponseDTO, tef.britneyResponseDTO,
+                        tef.karmaResponseDTO, tef.rayOfLightResponseDTO, tef.whenWeAllFallAsleepResponseDTO, tef.futureNostalgiaResponseDTO)));
+            }
+        }
+
+
+        @Test
+        void getAlbumsByReleaseYear_ShouldReturnEmptyListOfAlbums_WhenNoAlbumsExistForGivenYear() {
+            when(albumRepository.findAllByReleaseYear(1952)).thenReturn(List.of());
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                List<AlbumResponseDTO> albums = albumService.getAlbumsByReleaseYear(1952);
+
+                verify(albumRepository, times(1)).findAllByReleaseYear(1952);
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), never());
+
+                assertNotNull(albums);
+                assertEquals(0, albums.size());
+            }
+        }
+
+        @Test
+        void getAlbumsByReleaseYear_ShouldReturnListOfAlbums_WhenAlbumsExistForGivenYear() {
+            when(albumRepository.findAllByReleaseYear(2001)).thenReturn(List.of(tef.britney, tef.karma));
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.britney)).thenReturn(tef.britneyResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.karma)).thenReturn(tef.karmaResponseDTO);
+
+                List<AlbumResponseDTO> albums = albumService.getAlbumsByReleaseYear(2001);
+
+                verify(albumRepository, times(1)).findAllByReleaseYear(2001);
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), times(2));
+
+                assertNotNull(albums);
+                assertEquals(2, albums.size());
+                assertEquals(tef.britney.getId(), albums.get(0).id());
+                assertEquals(tef.britney.getReleaseYear(), albums.get(0).releaseYear());
+                assertEquals(tef.karma.getId(), albums.get(1).id());
+                assertEquals(tef.karma.getReleaseYear(), albums.get(1).releaseYear());
+            }
+        }
+
+        @Test
+        void getAlbumByTitle_ShouldReturnEmptyAlbums_WhenNoAlbumsExistForGivenTitle() {
+            when(albumRepository.findAllByTitle("Nonexistent Album")).thenReturn(List.of());
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                List<AlbumResponseDTO> albums = albumService.getAlbumsByTitle("Nonexistent Album");
+
+                verify(albumRepository, times(1)).findAllByTitle("Nonexistent Album");
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), never());
+
+                assertNotNull(albums);
+                assertEquals(0, albums.size());
+            }
+        }
+
+        @Test
+        void getAlbumByTitle_ShouldReturnAlbums_WhenAlbumsExistForGivenTitle() {
+            when(albumRepository.findAllByTitle("Goodbye Yellow Brick Road")).thenReturn(List.of(tef.goodbyeYellowBrickRoad));
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.goodbyeYellowBrickRoad)).thenReturn(tef.goodbyeYellowBrickRoadResponseDTO);
+
+                List<AlbumResponseDTO> albums = albumService.getAlbumsByTitle("Goodbye Yellow Brick Road");
+
+                verify(albumRepository, times(1)).findAllByTitle("Goodbye Yellow Brick Road");
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), times(1));
+
+                assertNotNull(albums);
+                assertEquals(1, albums.size());
+                assertTrue(albums.contains(tef.goodbyeYellowBrickRoadResponseDTO));
+            }
+        }
+
+        @Test
+        void getAlbumsByGenre_ShouldThrowNotFoundException_WhenGenreDoesNotExist() {
+            Set<Genre> rockRollGenres = Set.of(tef.rockRoll);
+            when(genreRepository.findByName(tef.rockRoll.getName())).thenReturn(Optional.empty());
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+
+                NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.getAlbumsByGenre(GenreType.ROCK_ROLL));
+
+                assertEquals("NotFound: Genre", thrown.getMessage());
+
+                verify(albumRepository, never()).findAllByGenreSet(rockRollGenres);
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), never());
+            }
+        }
+
+        @Test
+        void getAlbumsByGenre_ShouldReturnEmptyListOfAlbums_WhenNoAlbumsExistForGivenGenres() {
+            Set<Genre> jazzGenres = Set.of(tef.jazz);
+            when(genreRepository.findByName(tef.jazz.getName())).thenReturn(Optional.of(tef.jazz));
+            when(albumRepository.findAllByGenreSet(jazzGenres)).thenReturn(List.of());
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                List<AlbumResponseDTO> albums = albumService.getAlbumsByGenre(GenreType.JAZZ);
+
+                verify(genreRepository, times(1)).findByName(tef.jazz.getName());
+                verify(albumRepository, times(1)).findAllByGenreSet(jazzGenres);
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), never());
+
+                assertNotNull(albums);
+                assertEquals(0, albums.size());
+            }
+        }
+
+        @Test
+        void getAlbumsByGenre_ShouldReturnListOfAlbums_WhenAlbumsExistForGivenGenres() {
+            Set<Genre> popGenres = Set.of(tef.pop);
+            when(genreRepository.findByName(tef.pop.getName())).thenReturn(Optional.of(tef.pop));
+            when(albumRepository.findAllByGenreSet(popGenres)).thenReturn(List.of(tef.britney, tef.karma, tef.whenWeAllFallAsleep, tef.rayOfLight,
+                    tef.futureNostalgia, tef.bad, tef.goodbyeYellowBrickRoad));
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.britney)).thenReturn(tef.britneyResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.karma)).thenReturn(tef.karmaResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.whenWeAllFallAsleep)).thenReturn(tef.whenWeAllFallAsleepResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.rayOfLight)).thenReturn(tef.rayOfLightResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.futureNostalgia)).thenReturn(tef.futureNostalgiaResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.bad)).thenReturn(tef.badResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.goodbyeYellowBrickRoad)).thenReturn(tef.goodbyeYellowBrickRoadResponseDTO);
+
+                List<AlbumResponseDTO> albums = albumService.getAlbumsByGenre(GenreType.POP);
+
+                verify(genreRepository, times(1)).findByName(tef.pop.getName());
+                verify(albumRepository, times(1)).findAllByGenreSet(popGenres);
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), times(7));
+
+                assertNotNull(albums);
+                assertEquals(7, albums.size());
+                assertTrue(albums.containsAll(List.of(tef.britneyResponseDTO, tef.karmaResponseDTO, tef.whenWeAllFallAsleepResponseDTO, tef.rayOfLightResponseDTO,
+                        tef.futureNostalgiaResponseDTO, tef.badResponseDTO, tef.goodbyeYellowBrickRoadResponseDTO)));
+            }
+        }
+
+        @Test
+        void getAlbumsByFormat_ShouldReturnEmptyListOfAlbums_WhenNoAlbumsExistForGivenFormat() {
+            when(albumRepository.findAllByFormat(Format.DVD)).thenReturn(List.of());
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                List<AlbumResponseDTO> albums = albumService.getAlbumsByFormat(Format.DVD);
+
+                verify(albumRepository, times(1)).findAllByFormat(Format.DVD);
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), never());
+
+                assertNotNull(albums);
+                assertEquals(0, albums.size());
+            }
+        }
+
+        @Test
+        void getAlbumsByFormat_ShouldReturnListOfAlbums_WhenAlbumsExistForGivenFormat() {
+            when(albumRepository.findAllByFormat(Format.CD)).thenReturn(List.of(tef.goodbyeYellowBrickRoad, tef.bad, tef.rayOfLight, tef.futureNostalgia));
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.goodbyeYellowBrickRoad)).thenReturn(tef.goodbyeYellowBrickRoadResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.bad)).thenReturn(tef.badResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.rayOfLight)).thenReturn(tef.rayOfLightResponseDTO);
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.futureNostalgia)).thenReturn(tef.futureNostalgiaResponseDTO);
+
+                List<AlbumResponseDTO> albums = albumService.getAlbumsByFormat(Format.CD);
+
+                verify(albumRepository, times(1)).findAllByFormat(Format.CD);
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), times(4));
+
+                assertNotNull(albums);
+                assertEquals(4, albums.size());
+                assertTrue(albums.containsAll(List.of(tef.goodbyeYellowBrickRoadResponseDTO, tef.badResponseDTO,
+                        tef.rayOfLightResponseDTO, tef.futureNostalgiaResponseDTO)));
+            }
+
+        }
+
+        @Test
+        void getAlbumById_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
+            when(albumRepository.findById(15L)).thenReturn(Optional.empty());
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.getAlbumById(15L));
+
+                assertEquals("NotFound: Album", thrown.getMessage());
+
+                verify(albumRepository, times(1)).findById(15L);
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), never());
+            }
+        }
+
+        @Test
+        void getAlbumById_ShouldReturnAlbum_WhenAlbumExists() {
+            when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                utilities.when(() -> AlbumResponseMapper.toDTO(tef.goodbyeYellowBrickRoad)).thenReturn(tef.goodbyeYellowBrickRoadResponseDTO);
+
+                AlbumResponseDTO foundAlbum = albumService.getAlbumById(1L);
+
+                verify(albumRepository, times(1)).findById(1L);
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), times(1));
+
+                assertNotNull(foundAlbum);
+                assertEquals(tef.goodbyeYellowBrickRoadResponseDTO, foundAlbum);
+            }
+        }
+    }
+
+
+    @Nested
+    class AlbumWriteOps {
+
+        //    @Test
 //    void createAlbum_ShouldReturnSavedAlbum_WhenAttributesAreValid() {
 //        Date createdUpdatedDate = new Date();
 //
@@ -140,249 +406,244 @@ class AlbumServiceImplTest {
 //        assertEquals(0, createdAlbumDto.quantityInStock());
 //    }
 
-    @Test
-    void getAlbumByTitle_ShouldReturnAlbums_WhenAlbumsExistForGivenTitle() {
-        when(albumRepository.findAllByTitle("Goodbye Yellow Brick Road")).thenReturn(List.of(tef.goodbyeYellowBrickRoad));
 
-        List<AlbumResponseDTO> albums = albumService.getAlbumsByTitle("Goodbye Yellow Brick Road");
+        @Test
+        void updateAlbum_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
+            AlbumUpdateDTO updateDTO = AlbumUpdateDTO.builder().title("Updated Title").build();
 
-        assertNotNull(albums);
-        assertEquals(1, albums.size());
-        assertTrue(albums.contains(AlbumResponseMapper.toDTO(tef.goodbyeYellowBrickRoad)));
+            when(albumRepository.findById(15L)).thenReturn(Optional.empty());
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.updateAlbum(15L, updateDTO));
+
+                assertEquals("NotFound: Album", thrown.getMessage());
+
+                verify(albumRepository, times(1)).findById(15L);
+                verify(artistRepository, never()).findById(any(Long.class));
+                verify(genreRepository, never()).findById(any(Long.class));
+                verify(albumRepository, never()).save(any(Album.class));
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), never());
+            }
+        }
+
+        @Test
+        void updateAlbum_ShouldThrowNotFoundException_WhenArtistDoesNotExist() {
+            AlbumUpdateDTO updateDTO = AlbumUpdateDTO.builder().artistIds(List.of(15L)).build();
+
+            when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+            when(artistRepository.findById(15L)).thenReturn(Optional.empty());
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.updateAlbum(1L, updateDTO));
+
+                assertEquals("NotFound: Artist", thrown.getMessage());
+
+                verify(albumRepository, times(1)).findById(1L);
+                verify(artistRepository, times(1)).findById(15L);
+                verify(genreRepository, never()).findById(any(Long.class));
+                verify(albumRepository, never()).save(any(Album.class));
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), never());
+            }
+        }
+
+        @Test
+        void updateAlbum_ShouldThrowNotFoundException_WhenGenreDoesNotExist() {
+            AlbumUpdateDTO updateDTO = AlbumUpdateDTO.builder().genreIds(List.of(15L)).build();
+
+            when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+            when(genreRepository.findById(15L)).thenReturn(Optional.empty());
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.updateAlbum(1L, updateDTO));
+
+                assertEquals("NotFound: Genre", thrown.getMessage());
+
+                verify(albumRepository, times(1)).findById(1L);
+                verify(artistRepository, never()).findById(any(Long.class));
+                verify(genreRepository, times(1)).findById(15L);
+                verify(albumRepository, never()).save(any(Album.class));
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), never());
+            }
+        }
+
+        @Test
+        void updateAlbum_ShouldReturnUpdatedAlbum_WhenAlbumExists() {
+            AlbumUpdateDTO updateDTO = AlbumUpdateDTO.builder().title("Updated Title").build();
+            Album updatedGoodbyeYellowBrickRoad = tef.goodbyeYellowBrickRoad;
+            updatedGoodbyeYellowBrickRoad.setTitle(updateDTO.getTitle());
+            AlbumResponseDTO updatedGoodbyeYellowBrickRoadResponseDTO = TestEntityFactory.createAlbumResponseDTO(updatedGoodbyeYellowBrickRoad);
+
+            when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+            when(albumRepository.save(any(Album.class))).thenAnswer(invocation -> {
+                Album album = invocation.getArgument(0);
+                album.setTitle("Updated Title");
+
+                return album;
+            });
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                utilities.when(() -> AlbumResponseMapper.toDTO(updatedGoodbyeYellowBrickRoad)).thenReturn(updatedGoodbyeYellowBrickRoadResponseDTO);
+
+                AlbumResponseDTO updatedAlbum = albumService.updateAlbum(1L, updateDTO);
+
+
+                verify(albumRepository, times(1)).findById(1L);
+                verify(artistRepository, never()).findById(1L);
+                verify(genreRepository, never()).findById(any(Long.class));
+                verify(albumRepository, times(1)).save(any(Album.class));
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), times(1));
+
+                assertNotNull(updatedAlbum);
+                assertEquals("Updated Title", updatedAlbum.title());
+            }
+        }
+
+        @Test
+        void updateAlbum_ShouldReturnUpdatedAlbum_WhenGivenArtistsGenresAreNull() {
+            AlbumUpdateDTO updateDTO = AlbumUpdateDTO.builder()
+                    .title("Updated Title")
+                    .artistIds(null)
+                    .genreIds(null)
+                    .build();
+            Album updatedGoodbyeYellowBrickRoad = tef.goodbyeYellowBrickRoad;
+            updatedGoodbyeYellowBrickRoad.setTitle(updateDTO.getTitle());
+            AlbumResponseDTO updatedGoodbyeYellowBrickRoadResponseDTO = TestEntityFactory.createAlbumResponseDTO(updatedGoodbyeYellowBrickRoad);
+
+            when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+            when(albumRepository.save(any(Album.class))).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                utilities.when(() -> AlbumResponseMapper.toDTO(updatedGoodbyeYellowBrickRoad)).thenReturn(updatedGoodbyeYellowBrickRoadResponseDTO);
+
+                AlbumResponseDTO updatedAlbum = albumService.updateAlbum(1L, updateDTO);
+
+                verify(albumRepository, times(1)).findById(1L);
+                verify(artistRepository, never()).findById(any(Long.class));
+                verify(genreRepository, never()).findById(any(Long.class));
+                verify(albumRepository, times(1)).save(any(Album.class));
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), times(1));
+
+                assertNotNull(updatedAlbum);
+                assertEquals("Updated Title", updatedAlbum.title());
+                assertEquals(1, updatedAlbum.artists().size());
+                assertEquals(2, updatedAlbum.genres().size());
+                assertTrue(updatedAlbum.artists().contains(FlattenedArtistDTO.builder().id(1L).fullName(tef.eltonJohn.getFullName()).build()));
+                assertTrue(updatedAlbum.genres().containsAll(List.of(
+                        FlattenedGenreDTO.builder().id(1L).name(GenreType.ROCK).build(),
+                        FlattenedGenreDTO.builder().id(2L).name(GenreType.POP).build()
+                )));
+            }
+        }
+
+        @Test
+        void updateAlbum_ShouldUpdateAlbum_WhenArtistAndGenreArePresent() {
+            AlbumUpdateDTO updateDTO = AlbumUpdateDTO.builder()
+                    .title("Updated Title")
+                    .artistIds(List.of(1L))
+                    .genreIds(List.of(1L, 2L))
+                    .build();
+            Album updatedGoodbyeYellowBrickRoad = tef.goodbyeYellowBrickRoad;
+            updatedGoodbyeYellowBrickRoad.setTitle(updateDTO.getTitle());
+            AlbumResponseDTO updatedGoodbyeYellowBrickRoadResponseDTO = TestEntityFactory.createAlbumResponseDTO(updatedGoodbyeYellowBrickRoad);
+
+            when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+            when(artistRepository.findById(1L)).thenReturn(Optional.of(tef.eltonJohn));
+            when(genreRepository.findById(1L)).thenReturn(Optional.of(tef.rock));
+            when(genreRepository.findById(2L)).thenReturn(Optional.of(tef.pop));
+            when(albumRepository.save(any(Album.class))).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                utilities.when(() -> AlbumResponseMapper.toDTO(updatedGoodbyeYellowBrickRoad)).thenReturn(updatedGoodbyeYellowBrickRoadResponseDTO);
+
+                AlbumResponseDTO updatedAlbum = albumService.updateAlbum(1L, updateDTO);
+
+                verify(albumRepository, times(1)).findById(1L);
+                verify(artistRepository, times(1)).findById(1L);
+                verify(genreRepository, times(2)).findById(any(Long.class));
+                verify(albumRepository, times(1)).save(any(Album.class));
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), times(1));
+
+                assertNotNull(updatedAlbum);
+                assertEquals("Updated Title", updatedAlbum.title());
+                assertEquals(1, updatedAlbum.artists().size());
+                assertEquals(2, updatedAlbum.genres().size());
+            }
+        }
+
+
+        @Test
+        void updateAlbum_ShouldUpdateAlbumArtistsAndGenres_WhenArtistAndGenreArePresent() {
+            AlbumUpdateDTO updateDTO = AlbumUpdateDTO.builder()
+                    .artistIds(List.of(2L, 3L))
+                    .genreIds(List.of(3L, 4L))
+                    .build();
+            Album updatedGoodbyeYellowBrickRoad = tef.goodbyeYellowBrickRoad;
+            updatedGoodbyeYellowBrickRoad.setArtistSet(Set.of(tef.davidBowie, tef.michaelJackson));
+            updatedGoodbyeYellowBrickRoad.setGenreSet(Set.of(tef.dancePop, tef.electronic));
+            AlbumResponseDTO updatedGoodbyeYellowBrickRoadResponseDTO = TestEntityFactory.createAlbumResponseDTO(updatedGoodbyeYellowBrickRoad);
+
+            when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+            when(artistRepository.findById(2L)).thenReturn(Optional.of(tef.davidBowie));
+            when(artistRepository.findById(3L)).thenReturn(Optional.of(tef.michaelJackson));
+            when(genreRepository.findById(3L)).thenReturn(Optional.of(tef.dancePop));
+            when(genreRepository.findById(4L)).thenReturn(Optional.of(tef.electronic));
+            when(albumRepository.save(any(Album.class))).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
+            try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+                utilities.when(() -> AlbumResponseMapper.toDTO(updatedGoodbyeYellowBrickRoad)).thenReturn(updatedGoodbyeYellowBrickRoadResponseDTO);
+
+                AlbumResponseDTO updatedAlbum = albumService.updateAlbum(1L, updateDTO);
+
+                verify(albumRepository, times(1)).findById(1L);
+                verify(artistRepository, never()).findById(1L);
+                verify(artistRepository, times(1)).findById(2L);
+                verify(artistRepository, times(1)).findById(3L);
+                verify(genreRepository, never()).findById(1L);
+                verify(genreRepository, never()).findById(2L);
+                verify(genreRepository, times(1)).findById(3L);
+                verify(genreRepository, times(1)).findById(4L);
+                verify(albumRepository, times(1)).save(any(Album.class));
+                utilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), times(1));
+
+                assertNotNull(updatedAlbum);
+                assertEquals(1L, updatedAlbum.id());
+
+                assertEquals(2, updatedAlbum.artists().size());
+                assertFalse(updatedAlbum.artists().contains(FlattenedArtistDTO.builder().id(1L).fullName(tef.eltonJohn.getFullName()).build()));
+                assertTrue(updatedAlbum.artists().containsAll(List.of(
+                        FlattenedArtistDTO.builder().id(2L).fullName(tef.davidBowie.getFullName()).build(),
+                        FlattenedArtistDTO.builder().id(3L).fullName(tef.michaelJackson.getFullName()).build()
+                )));
+
+                assertEquals(2, updatedAlbum.genres().size());
+                assertFalse(updatedAlbum.genres().contains(FlattenedGenreDTO.builder().id(1L).name(GenreType.ROCK).build()));
+                assertFalse(updatedAlbum.genres().contains(FlattenedGenreDTO.builder().id(2L).name(GenreType.POP).build()));
+                assertTrue(updatedAlbum.genres().containsAll(List.of(
+                        FlattenedGenreDTO.builder().id(3L).name(GenreType.DANCE_POP).build(),
+                        FlattenedGenreDTO.builder().id(4L).name(GenreType.ELECTRONIC).build()
+                )));
+            }
+        }
+
+        @Test
+        void deleteAlbumById_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
+            when(albumRepository.findById(1L)).thenReturn(Optional.empty());
+
+            NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.deleteAlbumById(1L));
+
+            assertEquals("NotFound: Album", thrown.getMessage());
+
+            verify(albumRepository, times(1)).findById(1L);
+            verify(albumRepository, never()).deleteById(1L);
+        }
+
+        @Test
+        void deleteAlbumById_ShouldDeleteAlbum_WhenAlbumExists() {
+            when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
+
+            albumService.deleteAlbumById(1L);
+
+            verify(albumRepository, times(1)).findById(1L);
+            verify(albumRepository, times(1)).deleteById(1L);
+        }
     }
-
-    @Test
-    void getAlbumByTitle_ShouldReturnEmptyAlbums_WhenNoAlbumsExistForGivenTitle() {
-        when(albumRepository.findAllByTitle("Nonexistent Album")).thenReturn(List.of());
-
-        List<AlbumResponseDTO> albums = albumService.getAlbumsByTitle("Nonexistent Album");
-
-
-        assertNotNull(albums);
-        assertEquals(0, albums.size());
-    }
-
-    @Test
-    void getAlbumById_ShouldReturnAlbum_WhenAlbumExists() {
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
-
-        AlbumResponseDTO foundAlbum = albumService.getAlbumById(1L);
-
-        assertNotNull(foundAlbum);
-        assertEquals(AlbumResponseMapper.toDTO(tef.goodbyeYellowBrickRoad), foundAlbum);
-    }
-
-    @Test
-    void getAlbumById_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
-        when(albumRepository.findById(1L)).thenReturn(Optional.empty());
-
-        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.getAlbumById(1L));
-
-        assertEquals("NotFound: Album", thrown.getMessage());
-    }
-
-    @Test
-    void updateAlbum_ShouldReturnUpdatedAlbum_WhenAlbumExists() {
-        AlbumUpdateDTO updateDTO = new AlbumUpdateDTO();
-        updateDTO.setTitle("Updated Title");
-
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
-        when(albumRepository.save(any(Album.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        AlbumResponseDTO updatedAlbum = albumService.updateAlbum(1L, updateDTO);
-
-        assertNotNull(updatedAlbum);
-        assertEquals("Updated Title", updatedAlbum.title());
-        verify(albumRepository).save(any(Album.class));
-    }
-
-    @Test
-    void updateAlbum_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
-        AlbumUpdateDTO updateDTO = new AlbumUpdateDTO();
-        updateDTO.setTitle("Updated Title");
-
-        when(albumRepository.findById(1L)).thenReturn(Optional.empty());
-
-        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.updateAlbum(1L, updateDTO));
-
-        assertEquals("NotFound: Album", thrown.getMessage());
-        verify(albumRepository, never()).save(any(Album.class));
-    }
-
-    @Test
-    void updateAlbum_ShouldThrowNotFoundException_WhenArtistDoesNotExist() {
-        AlbumUpdateDTO updateDTO = new AlbumUpdateDTO();
-        updateDTO.setArtistIds(List.of(1L));
-
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
-        when(artistRepository.findById(1L)).thenReturn(Optional.empty());
-
-        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.updateAlbum(1L, updateDTO));
-
-        assertEquals("NotFound: Artist", thrown.getMessage());
-        verify(albumRepository, never()).save(any(Album.class));
-    }
-
-    @Test
-    void updateAlbum_ShouldThrowNotFoundException_WhenGenreDoesNotExist() {
-        AlbumUpdateDTO updateDTO = new AlbumUpdateDTO();
-        updateDTO.setGenreIds(List.of(1L));
-
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
-        when(genreRepository.findById(1L)).thenReturn(Optional.empty());
-
-        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.updateAlbum(1L, updateDTO));
-
-        assertEquals("NotFound: Genre", thrown.getMessage());
-        verify(albumRepository, never()).save(any(Album.class));
-    }
-
-    @Test
-    void updateAlbum_ShouldUpdateAlbum_WhenArtistAndGenreArePresent() {
-        AlbumUpdateDTO updateDTO = new AlbumUpdateDTO();
-        updateDTO.setTitle("Updated Title");
-        updateDTO.setArtistIds(List.of(1L));
-        updateDTO.setGenreIds(List.of(1L));
-
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
-        when(artistRepository.findById(1L)).thenReturn(Optional.of(tef.eltonJohn));
-        when(genreRepository.findById(1L)).thenReturn(Optional.of(tef.pop));
-        when(albumRepository.save(any(Album.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        AlbumResponseDTO updatedAlbum = albumService.updateAlbum(1L, updateDTO);
-
-        assertNotNull(updatedAlbum);
-        assertEquals("Updated Title", updatedAlbum.title());
-        assertEquals(1, updatedAlbum.artists().size());
-        assertEquals(1, updatedAlbum.genres().size());
-        verify(albumRepository).save(any(Album.class));
-    }
-
-    @Test
-    void updateAlbum_ShouldHandleNullArtistsAndGenres() {
-        AlbumUpdateDTO updateDTO = new AlbumUpdateDTO();
-        updateDTO.setTitle("Updated Title");
-        updateDTO.setArtistIds(null);
-        updateDTO.setGenreIds(null);
-
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
-        when(albumRepository.save(any(Album.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        AlbumResponseDTO updatedAlbum = albumService.updateAlbum(1L, updateDTO);
-
-        assertNotNull(updatedAlbum);
-        assertEquals("Updated Title", updatedAlbum.title());
-        verify(albumRepository).save(any(Album.class));
-    }
-
-    @Test
-    void deleteAlbumById_ShouldDeleteAlbum_WhenAlbumExists() {
-        when(albumRepository.findById(1L)).thenReturn(Optional.of(tef.goodbyeYellowBrickRoad));
-
-        albumService.deleteAlbumById(1L);
-
-        verify(albumRepository).deleteById(1L);
-    }
-
-    @Test
-    void deleteAlbumById_ShouldThrowNotFoundException_WhenAlbumDoesNotExist() {
-        when(albumRepository.findById(1L)).thenReturn(Optional.empty());
-
-        NotFoundException thrown = assertThrows(NotFoundException.class, () -> albumService.deleteAlbumById(1L));
-
-        assertEquals("NotFound: Album", thrown.getMessage());
-    }
-
-    @Test
-    void getAllAlbums_ShouldReturnListOfAlbums() {
-        when(albumRepository.findAll()).thenReturn(List.of(tef.goodbyeYellowBrickRoad, tef.heroes, tef.bad, tef.britney, tef.karma, tef.rayOfLight, tef.whenWeAllFallAsleep, tef.futureNostalgia));
-
-        List<AlbumResponseDTO> albums = albumService.getAllAlbums();
-
-        assertNotNull(albums);
-        assertEquals(8, albums.size());
-    }
-
-    @Test
-    void getAlbumsByReleaseYear_ShouldReturnListOfAlbums_WhenAlbumsExistForGivenYear() {
-        when(albumRepository.findAllByReleaseYear(2001)).thenReturn(List.of(tef.britney, tef.karma));
-
-        List<AlbumResponseDTO> albums = albumService.getAlbumsByReleaseYear(2001);
-
-        assertNotNull(albums);
-        assertEquals(2, albums.size());
-        assertTrue(albums.containsAll(List.of(AlbumResponseMapper.toDTO(tef.britney), AlbumResponseMapper.toDTO(tef.karma))));
-    }
-
-    @Test
-    void getAlbumsByReleaseYear_ShouldReturnEmptyListOfAlbums_WhenNoAlbumsExistForGivenYear() {
-        when(albumRepository.findAllByReleaseYear(1952)).thenReturn(List.of());
-
-        List<AlbumResponseDTO> albums = albumService.getAlbumsByReleaseYear(1952);
-
-        assertNotNull(albums);
-        assertEquals(0, albums.size());
-    }
-
-    @Test
-    void getAlbumsByGenre_ShouldReturnListOfAlbums_WhenAlbumsExistForGivenGenres() {
-        Set<Genre> popGenres = Set.of(tef.pop);
-        when(genreRepository.findByName(tef.pop.getName())).thenReturn(Optional.of(tef.pop));
-        when(albumRepository.findAllByGenreSet(popGenres)).thenReturn(List.of(tef.britney, tef.karma, tef.whenWeAllFallAsleep, tef.rayOfLight, tef.futureNostalgia, tef.bad, tef.goodbyeYellowBrickRoad));
-
-        List<AlbumResponseDTO> albums = albumService.getAlbumsByGenre(GenreType.POP);
-
-        assertNotNull(albums);
-        assertEquals(7, albums.size());
-        assertTrue(albums.containsAll(List.of(
-                AlbumResponseMapper.toDTO(tef.britney),
-                AlbumResponseMapper.toDTO(tef.karma),
-                AlbumResponseMapper.toDTO(tef.whenWeAllFallAsleep),
-                AlbumResponseMapper.toDTO(tef.rayOfLight),
-                AlbumResponseMapper.toDTO(tef.futureNostalgia),
-                AlbumResponseMapper.toDTO(tef.bad),
-                AlbumResponseMapper.toDTO(tef.goodbyeYellowBrickRoad)))
-        );
-    }
-
-    @Test
-    void getAlbumsByGenre_ShouldReturnEmptyListOfAlbums_WhenNoAlbumsExistForGivenGenres() {
-        Set<Genre> jazzGenres = Set.of(tef.jazz);
-        when(genreRepository.findByName(tef.jazz.getName())).thenReturn(Optional.of(tef.jazz));
-        when(albumRepository.findAllByGenreSet(jazzGenres)).thenReturn(List.of());
-
-        List<AlbumResponseDTO> albums = albumService.getAlbumsByGenre(GenreType.JAZZ);
-
-        assertNotNull(albums);
-        assertEquals(0, albums.size());
-        assertTrue(albums.containsAll(List.of()));
-    }
-
-    @Test
-    void getAlbumsByFormat_ShouldReturnListOfAlbums_WhenAlbumsExistForGivenFormat() {
-        when(albumRepository.findAllByFormat(Format.CD)).thenReturn(List.of(tef.goodbyeYellowBrickRoad, tef.bad, tef.rayOfLight, tef.futureNostalgia));
-
-        List<AlbumResponseDTO> albums = albumService.getAlbumsByFormat(Format.CD);
-
-        assertNotNull(albums);
-        assertEquals(4, albums.size());
-        assertTrue(albums.containsAll(List.of(
-                AlbumResponseMapper.toDTO(tef.goodbyeYellowBrickRoad),
-                AlbumResponseMapper.toDTO(tef.bad),
-                AlbumResponseMapper.toDTO(tef.rayOfLight),
-                AlbumResponseMapper.toDTO(tef.futureNostalgia)))
-        );
-    }
-
-    @Test
-    void getAlbumsByFormat_ShouldReturnEmptyListOfAlbums_WhenNoAlbumsExistForGivenFormat() {
-        when(albumRepository.findAllByFormat(Format.DVD)).thenReturn(List.of());
-
-        List<AlbumResponseDTO> albums = albumService.getAlbumsByFormat(Format.CD);
-
-        assertNotNull(albums);
-        assertEquals(0, albums.size());
-    }
-
-
 }

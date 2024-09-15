@@ -1,11 +1,15 @@
 package org.northcoders.recordshopapi.util.service;
 
+import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
+import org.northcoders.recordshopapi.dto.response.album.FlattenedArtistDTO;
+import org.northcoders.recordshopapi.dto.response.album.FlattenedGenreDTO;
 import org.northcoders.recordshopapi.model.*;
 
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 
 public class TestEntityFactory {
@@ -20,6 +24,7 @@ public class TestEntityFactory {
     public Genre rockRoll, country;
 
     public Album goodbyeYellowBrickRoad, heroes, bad, britney, karma, rayOfLight, whenWeAllFallAsleep, futureNostalgia;
+    public AlbumResponseDTO goodbyeYellowBrickRoadResponseDTO, heroesResponseDTO, badResponseDTO, britneyResponseDTO, karmaResponseDTO, rayOfLightResponseDTO, whenWeAllFallAsleepResponseDTO, futureNostalgiaResponseDTO;
 
     private void createArtists() {
         eltonJohn = Artist.builder()
@@ -308,10 +313,50 @@ public class TestEntityFactory {
         futureNostalgia.setUpdatedDate(new Date());
     }
 
+    public static AlbumResponseDTO createAlbumResponseDTO(Album album) {
+        return AlbumResponseDTO.builder()
+                .id(album.getId())
+                .title(album.getTitle())
+                .artists(album.getArtistSet().stream()
+                        .map(artist -> FlattenedArtistDTO.builder()
+                                .id(artist.getId())
+                                .fullName(artist.getFullName())
+                                .build())
+                        .collect(Collectors.toList()))
+                .genres(album.getGenreSet().stream()
+                        .map(genre -> FlattenedGenreDTO.builder()
+                                .id(genre.getId())
+                                .name(genre.getName())
+                                .build())
+                        .collect(Collectors.toList()))
+                .durationInSeconds(album.getDurationInSeconds())
+                .imageUrl(album.getImageUrl())
+                .releaseYear(album.getReleaseYear())
+                .publisher(album.getPublisher())
+                .priceInPences(album.getPriceInPences())
+                .currency(album.getCurrency())
+                .quantityInStock(album.getQuantityInStock())
+                .format(album.getFormat())
+                .createdDate(album.getCreatedDate())
+                .updatedDate(album.getUpdatedDate())
+                .build();
+    }
+
     public void initialiseAllEntities() {
         createArtists();
         createGenres();
         createAlbums();
+    }
+
+    public void initializeAlbumResponseDTOs() {
+        goodbyeYellowBrickRoadResponseDTO = createAlbumResponseDTO(goodbyeYellowBrickRoad);
+        heroesResponseDTO = createAlbumResponseDTO(heroes);
+        badResponseDTO = createAlbumResponseDTO(bad);
+        britneyResponseDTO = createAlbumResponseDTO(britney);
+        karmaResponseDTO = createAlbumResponseDTO(karma);
+        rayOfLightResponseDTO = createAlbumResponseDTO(rayOfLight);
+        whenWeAllFallAsleepResponseDTO = createAlbumResponseDTO(whenWeAllFallAsleep);
+        futureNostalgiaResponseDTO = createAlbumResponseDTO(futureNostalgia);
     }
 
     public TestEntityFactory() {
