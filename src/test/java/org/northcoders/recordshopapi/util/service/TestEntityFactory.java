@@ -3,6 +3,9 @@ package org.northcoders.recordshopapi.util.service;
 import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
 import org.northcoders.recordshopapi.dto.response.album.FlattenedArtistDTO;
 import org.northcoders.recordshopapi.dto.response.album.FlattenedGenreDTO;
+import org.northcoders.recordshopapi.dto.response.artist.ArtistResponseDTO;
+import org.northcoders.recordshopapi.dto.response.artist.FlattenedAlbumDTO;
+import org.northcoders.recordshopapi.dto.response.genre.GenreResponseDTO;
 import org.northcoders.recordshopapi.model.*;
 
 import java.util.Date;
@@ -18,163 +21,59 @@ public class TestEntityFactory {
     public AtomicLong currentAlbumId;
 
     public Artist eltonJohn, davidBowie, michaelJackson, britneySpears, tarkan, madonna, billieEilish, duaLipa;
-    public Artist elvisPresley;
+    public ArtistResponseDTO eltonJohnResponseDTO, davidBowieResponseDTO, michaelJacksonResponseDTO, britneySpearsResponseDTO,
+            tarkanResponseDTO, madonnaResponseDTO, billieEilishResponseDTO, duaLipaResponseDTO;
 
     public Genre rock, pop, dancePop, electronic, funk, world, jazz;
-    public Genre rockRoll, country;
+    public GenreResponseDTO rockResponseDTO, popResponseDTO, dancePopResponseDTO, electronicResponseDTO, funkResponseDTO, worldResponseDTO, jazzResponseDTO;
 
     public Album goodbyeYellowBrickRoad, heroes, bad, britney, karma, rayOfLight, whenWeAllFallAsleep, futureNostalgia;
     public AlbumResponseDTO goodbyeYellowBrickRoadResponseDTO, heroesResponseDTO, badResponseDTO, britneyResponseDTO, karmaResponseDTO, rayOfLightResponseDTO, whenWeAllFallAsleepResponseDTO, futureNostalgiaResponseDTO;
 
-    private void createArtists() {
-        eltonJohn = Artist.builder()
-                .fullName("Elton John")
+    // Entity creation & initialization
+    private Artist createArtist(String fullName) {
+        Artist artist = Artist.builder()
+                .fullName(fullName)
                 .albums(List.of())
                 .build();
-        eltonJohn.setId(currentArtistId.incrementAndGet());
-        eltonJohn.setCreatedDate(new Date());
-        eltonJohn.setUpdatedDate(new Date());
+        artist.setId(currentArtistId.incrementAndGet());
+        artist.setCreatedDate(new Date());
+        artist.setUpdatedDate(new Date());
 
-        davidBowie = Artist.builder()
-                .fullName("David Bowie")
-                .albums(List.of())
+        return artist;
+    }
+    private Genre createGenre(GenreType genreType) {
+        Genre genre = Genre.builder()
+                .name(genreType)
                 .build();
-        davidBowie.setId(currentArtistId.incrementAndGet());
-        davidBowie.setCreatedDate(new Date());
-        davidBowie.setUpdatedDate(new Date());
+        genre.setId(currentGenreId.incrementAndGet());
+        genre.setAlbumSet(new HashSet<>());
+        genre.setCreatedDate(new Date());
+        genre.setUpdatedDate(new Date());
 
-        michaelJackson = Artist.builder()
-                .fullName("Michael Jackson")
-                .albums(List.of())
-                .build();
-        michaelJackson.setId(currentArtistId.incrementAndGet());
-        michaelJackson.setCreatedDate(new Date());
-        michaelJackson.setUpdatedDate(new Date());
-
-        britneySpears = Artist.builder()
-                .fullName("Britney Spears")
-                .albums(List.of())
-                .build();
-        britneySpears.setId(currentArtistId.incrementAndGet());
-        britneySpears.setCreatedDate(new Date());
-        britneySpears.setUpdatedDate(new Date());
-
-        tarkan = Artist.builder()
-                .fullName("Tarkan")
-                .albums(List.of())
-                .build();
-        tarkan.setId(currentArtistId.incrementAndGet());
-        tarkan.setCreatedDate(new Date());
-        tarkan.setUpdatedDate(new Date());
-
-        madonna = Artist.builder()
-                .fullName("Madonna")
-                .albums(List.of())
-                .build();
-        madonna.setId(currentArtistId.incrementAndGet());
-        madonna.setCreatedDate(new Date());
-        madonna.setUpdatedDate(new Date());
-
-        billieEilish = Artist.builder()
-                .fullName("Billie Eilish")
-                .albums(List.of())
-                .build();
-        billieEilish.setId(currentArtistId.incrementAndGet());
-        billieEilish.setCreatedDate(new Date());
-        billieEilish.setUpdatedDate(new Date());
-
-        duaLipa = Artist.builder()
-                .fullName("Dua Lipa")
-                .albums(List.of())
-                .build();
-        duaLipa.setId(currentArtistId.incrementAndGet());
-        duaLipa.setCreatedDate(new Date());
-        duaLipa.setUpdatedDate(new Date());
-
-        elvisPresley = Artist.builder()
-                .fullName("Elvis Presley")
-                .albums(List.of())
-                .build();
-        // Leave it for creation test
-//        elvisPresley.setId(currentArtistId.incrementAndGet());
-//        elvisPresley.setCreatedDate(new Date());
-//        elvisPresley.setUpdatedDate(new Date());
+        return genre;
     }
 
-    private void createGenres() {
-
-        rock = Genre.builder()
-                .name(GenreType.ROCK)
-                .build();
-        rock.setId(currentGenreId.incrementAndGet());
-        rock.setAlbumSet(new HashSet<>());
-        rock.setCreatedDate(new Date());
-        rock.setUpdatedDate(new Date());
-
-        pop = Genre.builder()
-                .name(GenreType.POP)
-                .build();
-        pop.setId(currentGenreId.incrementAndGet());
-        pop.setAlbumSet(new HashSet<>());
-        pop.setCreatedDate(new Date());
-        pop.setUpdatedDate(new Date());
-
-        dancePop = Genre.builder()
-                .name(GenreType.DANCE_POP)
-                .build();
-        dancePop.setId(currentGenreId.incrementAndGet());
-        dancePop.setAlbumSet(new HashSet<>());
-        dancePop.setCreatedDate(new Date());
-        dancePop.setUpdatedDate(new Date());
-
-        electronic = Genre.builder()
-                .name(GenreType.ELECTRONIC)
-                .build();
-        electronic.setId(currentGenreId.incrementAndGet());
-        electronic.setAlbumSet(new HashSet<>());
-        electronic.setCreatedDate(new Date());
-        electronic.setUpdatedDate(new Date());
-
-        funk = Genre.builder()
-                .name(GenreType.FUNK)
-                .build();
-        funk.setId(currentGenreId.incrementAndGet());
-        funk.setAlbumSet(new HashSet<>());
-        funk.setCreatedDate(new Date());
-        funk.setUpdatedDate(new Date());
-
-        world = Genre.builder()
-                .name(GenreType.WORLD)
-                .build();
-        world.setId(currentGenreId.incrementAndGet());
-        world.setAlbumSet(new HashSet<>());
-        world.setCreatedDate(new Date());
-        world.setUpdatedDate(new Date());
-
-        jazz = Genre.builder()
-                .name(GenreType.JAZZ)
-                .build(); // No Albums own this genre
-        jazz.setId(currentGenreId.incrementAndGet());
-        jazz.setAlbumSet(new HashSet<>());
-        jazz.setCreatedDate(new Date());
-        jazz.setUpdatedDate(new Date());
-
-        rockRoll = Genre.builder()
-                .name(GenreType.ROCK_ROLL)
-                .build();
-        // Leave it for creation test
-//        rockRoll.setId(currentGenreId.incrementAndGet());
-//        rockRoll.setAlbumSet(new HashSet<>());
-
-        country = Genre.builder()
-                .name(GenreType.COUNTRY)
-                .build();
-        // Leave it for creation test
-//        country.setId(currentGenreId.incrementAndGet());
-//        country.setAlbumSet(new HashSet<>());
+    private void initializeArtists() {
+        eltonJohn = createArtist("Elton John");
+        davidBowie = createArtist("David Bowie");
+        michaelJackson = createArtist("Michael Jackson");
+        britneySpears = createArtist("Britney Spears");
+        tarkan = createArtist("Tarkan");
+        madonna = createArtist("Madonna");
+        billieEilish = createArtist("Billie Eilish");
+        duaLipa = createArtist("Dua Lipa");
     }
-
-    private void createAlbums() {
+    private void initializeGenres() {
+        rock = createGenre(GenreType.ROCK);
+        pop = createGenre(GenreType.POP);
+        dancePop = createGenre(GenreType.DANCE_POP);
+        electronic = createGenre(GenreType.ELECTRONIC);
+        funk = createGenre(GenreType.FUNK);
+        world = createGenre(GenreType.WORLD);
+        jazz = createGenre(GenreType.JAZZ); // No Albums own this genre
+    }
+    private void initializeAlbums() {
 
         goodbyeYellowBrickRoad = Album.builder()
                 .title("Goodbye Yellow Brick Road")
@@ -312,7 +211,13 @@ public class TestEntityFactory {
         futureNostalgia.setCreatedDate(new Date());
         futureNostalgia.setUpdatedDate(new Date());
     }
+    public void initialiseAllEntities() {
+        initializeArtists();
+        initializeGenres();
+        initializeAlbums();
+    }
 
+    // DTO creation & initialization
     public static AlbumResponseDTO createAlbumResponseDTO(Album album) {
         return AlbumResponseDTO.builder()
                 .id(album.getId())
@@ -341,13 +246,54 @@ public class TestEntityFactory {
                 .updatedDate(album.getUpdatedDate())
                 .build();
     }
-
-    public void initialiseAllEntities() {
-        createArtists();
-        createGenres();
-        createAlbums();
+    public static ArtistResponseDTO createArtistResponseDTO(Artist artist) {
+        return ArtistResponseDTO.builder()
+                .id(artist.getId())
+                .fullName(artist.getFullName())
+                .albums(artist.getAlbumSet().stream()
+                        .map(album -> FlattenedAlbumDTO.builder()
+                                .id(album.getId())
+                                .title(album.getTitle())
+                                .build())
+                        .collect(Collectors.toList()))
+                .createdDate(artist.getCreatedDate())
+                .updatedDate(artist.getUpdatedDate())
+                .build();
+    }
+    public static GenreResponseDTO createGenreResponseDTO(Genre genre) {
+        return GenreResponseDTO.builder()
+                .id(genre.getId())
+                .name(genre.getName())
+                .albums(genre.getAlbumSet().stream()
+                        .map(album -> org.northcoders.recordshopapi.dto.response.genre.FlattenedAlbumDTO.builder()
+                                .id(album.getId())
+                                .title(album.getTitle())
+                                .build())
+                        .collect(Collectors.toList()))
+                .createdDate(genre.getCreatedDate())
+                .updatedDate(genre.getUpdatedDate())
+                .build();
     }
 
+    public void initializeArtistResponseDTOs() {
+        eltonJohnResponseDTO = createArtistResponseDTO(eltonJohn);
+        davidBowieResponseDTO = createArtistResponseDTO(davidBowie);
+        michaelJacksonResponseDTO = createArtistResponseDTO(michaelJackson);
+        britneySpearsResponseDTO = createArtistResponseDTO(britneySpears);
+        tarkanResponseDTO = createArtistResponseDTO(tarkan);
+        madonnaResponseDTO = createArtistResponseDTO(madonna);
+        billieEilishResponseDTO = createArtistResponseDTO(billieEilish);
+        duaLipaResponseDTO = createArtistResponseDTO(duaLipa);
+    }
+    public void initializeGenreResponseDTOs() {
+        rockResponseDTO = createGenreResponseDTO(rock);
+        popResponseDTO = createGenreResponseDTO(pop);
+        dancePopResponseDTO = createGenreResponseDTO(dancePop);
+        electronicResponseDTO = createGenreResponseDTO(electronic);
+        funkResponseDTO = createGenreResponseDTO(funk);
+        worldResponseDTO = createGenreResponseDTO(world);
+        jazzResponseDTO = createGenreResponseDTO(jazz);
+    }
     public void initializeAlbumResponseDTOs() {
         goodbyeYellowBrickRoadResponseDTO = createAlbumResponseDTO(goodbyeYellowBrickRoad);
         heroesResponseDTO = createAlbumResponseDTO(heroes);

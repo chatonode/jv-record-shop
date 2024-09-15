@@ -179,8 +179,8 @@ class AlbumServiceImplTest {
 
         @Test
         void getAlbumsByGenre_ShouldThrowNotFoundException_WhenGenreDoesNotExist() {
-            Set<Genre> rockRollGenres = Set.of(tef.rockRoll);
-            when(genreRepository.findByName(tef.rockRoll.getName())).thenReturn(Optional.empty());
+            Set<Genre> rockRollGenres = Set.of(Genre.builder().name(GenreType.ROCK_ROLL).build());
+            when(genreRepository.findByName(GenreType.ROCK_ROLL)).thenReturn(Optional.empty());
 
             try (MockedStatic<AlbumResponseMapper> utilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
 
