@@ -1,9 +1,7 @@
 package org.northcoders.recordshopapi.service;
 
 import org.northcoders.recordshopapi.dto.request.artist.ArtistCreateDTO;
-import org.northcoders.recordshopapi.dto.response.artist.ArtistResponseDTO;
-import org.northcoders.recordshopapi.model.Artist;
-import org.springframework.stereotype.Service;
+import org.northcoders.recordshopapi.dto.response.success.artist.ArtistResponseDTO;
 
 import java.util.List;
 

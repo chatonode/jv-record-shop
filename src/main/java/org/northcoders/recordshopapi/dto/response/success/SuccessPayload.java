@@ -1,8 +1,11 @@
-package org.northcoders.recordshopapi.dto.response;
+package org.northcoders.recordshopapi.dto.response.success;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
+import org.northcoders.recordshopapi.dto.response.Payload;
+import org.northcoders.recordshopapi.dto.response.enums.PayloadStatus;
+import org.northcoders.recordshopapi.dto.response.enums.SuccessResultType;
 
 @Getter
 public class SuccessPayload extends Payload {

@@ -1,11 +1,11 @@
 package org.northcoders.recordshopapi.util.service;
 
-import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
-import org.northcoders.recordshopapi.dto.response.album.FlattenedArtistDTO;
-import org.northcoders.recordshopapi.dto.response.album.FlattenedGenreDTO;
-import org.northcoders.recordshopapi.dto.response.artist.ArtistResponseDTO;
-import org.northcoders.recordshopapi.dto.response.artist.FlattenedAlbumDTO;
-import org.northcoders.recordshopapi.dto.response.genre.GenreResponseDTO;
+import org.northcoders.recordshopapi.dto.response.success.album.AlbumResponseDTO;
+import org.northcoders.recordshopapi.dto.response.success.album.FlattenedArtistDTO;
+import org.northcoders.recordshopapi.dto.response.success.album.FlattenedGenreDTO;
+import org.northcoders.recordshopapi.dto.response.success.artist.ArtistResponseDTO;
+import org.northcoders.recordshopapi.dto.response.success.artist.FlattenedAlbumDTO;
+import org.northcoders.recordshopapi.dto.response.success.genre.GenreResponseDTO;
 import org.northcoders.recordshopapi.model.*;
 
 import java.util.Date;
@@ -267,7 +267,7 @@ public class TestEntityFactory {
                 .id(genre.getId())
                 .name(genre.getName())
                 .albums(genre.getAlbumSet().stream()
-                        .map(album -> org.northcoders.recordshopapi.dto.response.genre.FlattenedAlbumDTO.builder()
+                        .map(album -> org.northcoders.recordshopapi.dto.response.success.genre.FlattenedAlbumDTO.builder()
                                 .id(album.getId())
                                 .title(album.getTitle())
                                 .build())

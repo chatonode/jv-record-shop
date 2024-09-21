@@ -1,7 +1,7 @@
 package org.northcoders.recordshopapi.service;
 
 import org.northcoders.recordshopapi.dto.request.genre.GenreCreateDTO;
-import org.northcoders.recordshopapi.dto.response.genre.GenreResponseDTO;
+import org.northcoders.recordshopapi.dto.response.success.genre.GenreResponseDTO;
 import org.northcoders.recordshopapi.exception.service.NotFoundException;
 import org.northcoders.recordshopapi.mapper.request.genre.GenreCreateMapper;
 import org.northcoders.recordshopapi.mapper.response.GenreResponseMapper;

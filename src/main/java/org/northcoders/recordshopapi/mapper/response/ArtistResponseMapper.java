@@ -1,7 +1,7 @@
 package org.northcoders.recordshopapi.mapper.response;
 
-import org.northcoders.recordshopapi.dto.response.artist.ArtistResponseDTO;
-import org.northcoders.recordshopapi.dto.response.artist.FlattenedAlbumDTO;
+import org.northcoders.recordshopapi.dto.response.success.artist.ArtistResponseDTO;
+import org.northcoders.recordshopapi.dto.response.success.artist.FlattenedAlbumDTO;
 import org.northcoders.recordshopapi.model.Artist;
 
 import java.util.stream.Collectors;

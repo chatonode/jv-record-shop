@@ -1,4 +1,4 @@
-package org.northcoders.recordshopapi.dto.response.album;
+package org.northcoders.recordshopapi.dto.response.success.album;
 
 
 import java.util.Date;

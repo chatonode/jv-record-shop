@@ -1,4 +1,4 @@
-package org.northcoders.recordshopapi.dto.response.genre;
+package org.northcoders.recordshopapi.dto.response.success.genre;
 
 import lombok.Builder;
 

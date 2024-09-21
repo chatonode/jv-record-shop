@@ -2,6 +2,7 @@ package org.northcoders.recordshopapi.dto.response;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.northcoders.recordshopapi.dto.response.enums.PayloadStatus;
 
 import java.time.LocalDateTime;
 

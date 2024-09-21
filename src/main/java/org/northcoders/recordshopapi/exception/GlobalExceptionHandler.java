@@ -1,50 +1,37 @@
 package org.northcoders.recordshopapi.exception;
 
-import org.northcoders.recordshopapi.dto.response.ErrorsPayload;
+import org.northcoders.recordshopapi.dto.response.error.validation.ValidationErrorsPayload;
 import org.northcoders.recordshopapi.exception.service.NotFoundException;
-import org.northcoders.recordshopapi.dto.response.ErrorPayload;
+import org.northcoders.recordshopapi.dto.response.error.common.BasicErrorPayload;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorsPayload> handleValidationExceptions(
+    public ResponseEntity<ValidationErrorsPayload> handleValidationExceptions(
             MethodArgumentNotValidException exception) {
-        Map<String, String> errors = new HashMap<>();
-        exception.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
 
-        ErrorsPayload errorsPayload = new ErrorsPayload(exception);
+        ValidationErrorsPayload validationErrorsPayload = new ValidationErrorsPayload(exception);
 
-        return new ResponseEntity<>(errorsPayload, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(validationErrorsPayload, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorPayload> handleNotFoundException(NotFoundException exception) {
-        ErrorPayload errorPayload = new ErrorPayload(exception);
+    public ResponseEntity<BasicErrorPayload> handleNotFoundException(NotFoundException exception) {
+        BasicErrorPayload basicErrorPayload = new BasicErrorPayload(exception, "Resource does not exist.");
 
-        return new ResponseEntity<>(errorPayload, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(basicErrorPayload, HttpStatus.NOT_FOUND);
     }
 
-
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorPayload> handleRuntimeException(RuntimeException exception) {
-        ErrorPayload errorPayload = new ErrorPayload(exception);
+    public ResponseEntity<BasicErrorPayload> handleRuntimeException(RuntimeException exception) {
+        BasicErrorPayload basicErrorPayload = new BasicErrorPayload(exception, "Generic Error");
 
-        System.out.println(exception.getCause());
-
-        return new ResponseEntity<>(errorPayload, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(basicErrorPayload, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
