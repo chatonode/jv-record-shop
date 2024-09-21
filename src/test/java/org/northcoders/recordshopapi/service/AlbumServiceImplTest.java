@@ -377,10 +377,94 @@ class AlbumServiceImplTest {
             }
         }
 
-        @Test
-        void createAlbum_ShouldHandleOptionalFields_WhenOptionalFieldsAreNull() {
-            // TODO
-        }
+//        @Test
+//        void createAlbum_ShouldHandleOptionalFields_WhenOptionalFieldsAreNull() {
+//            AlbumCreateDTO createDTO = AlbumCreateDTO.builder()
+//                    .title("Renaissance")
+//                    .artistIds(List.of(tef.beyonce.getId()))
+//                    .genreIds(List.of(tef.dancePop.getId(), tef.electronic.getId(), tef.world.getId()))
+//                    .durationInSeconds(3600) // Approx. 60 minutes
+////                    .imageUrl("https://upload.wikimedia.org/wikipedia/en/a/ad/Beyonc%C3%A9_-_Renaissance.png")
+////                    .releaseYear(2022)
+//                    .format(Format.CD)
+////                    .publisher("Columbia Records")
+//                    .priceInPences(1799) // £17.99
+//                    .currency(Currency.GBP)
+//                    .build();
+//
+//            when(artistRepository.findById(9L)).thenReturn(Optional.of(tef.beyonce));
+//            when(genreRepository.findById(tef.dancePop.getId())).thenReturn(Optional.of(tef.dancePop));
+//            when(genreRepository.findById(tef.electronic.getId())).thenReturn(Optional.of(tef.electronic));
+//            when(genreRepository.findById(tef.world.getId())).thenReturn(Optional.of(tef.world));
+//            when(albumRepository.save(any(Album.class))).thenAnswer(invocationOnMock -> {
+//                Album album = invocationOnMock.getArgument(0);
+//                album.setId(tef.currentAlbumId.incrementAndGet());
+//                album.setQuantityInStock(0);
+//                album.setCreatedDate(new Date());
+//                album.setUpdatedDate(new Date());
+//
+//                return album;
+//            });
+//
+//            try (MockedStatic<AlbumCreateMapper> reqUtilities = Mockito.mockStatic(AlbumCreateMapper.class);
+//                 MockedStatic<AlbumResponseMapper> resUtilities = Mockito.mockStatic(AlbumResponseMapper.class)) {
+//                reqUtilities.when(() -> AlbumCreateMapper.toEntity(createDTO, Mockito.<List<Artist>>any(), Mockito.<List<Genre>>any())).thenAnswer(invocationOnMock -> {
+//                    AlbumCreateDTO albumCreateDTO = invocationOnMock.getArgument(0);
+//                    List<Artist> albumCreateDTOArtists = invocationOnMock.getArgument(1);
+//                    List<Genre> albumCreateDTOGenres = invocationOnMock.getArgument(2);
+//
+//                    System.out.println(albumCreateDTO);
+//                    System.out.println(albumCreateDTOArtists);
+//                    System.out.println(albumCreateDTOGenres);
+//
+//                    Album createdAlbum = Album.builder()
+//                            .title(albumCreateDTO.getTitle())
+//                            .artists(albumCreateDTOArtists)
+//                            .genres(albumCreateDTOGenres)
+//                            .durationInSeconds(albumCreateDTO.getDurationInSeconds())
+//                            .format(albumCreateDTO.getFormat())
+//                            .priceInPences(albumCreateDTO.getPriceInPences())
+//                            .currency(albumCreateDTO.getCurrency())
+//                            .build();
+//
+//                    return createdAlbum;
+//                });
+//                resUtilities.when(() -> AlbumResponseMapper.toDTO(any(Album.class))).thenAnswer(invocationOnMock -> {
+//                    Album album = invocationOnMock.getArgument(0);
+//
+//                    return TestEntityFactory.createAlbumResponseDTO(album);
+//                });
+//
+//                AlbumResponseDTO createdAlbum = albumService.createAlbum(createDTO);
+//
+//                verify(artistRepository, times(1)).findById(tef.beyonce.getId());
+//                verify(genreRepository, times(3)).findById(any(Long.class));
+//                reqUtilities.verify(() -> AlbumCreateMapper.toEntity(any(AlbumCreateDTO.class), Mockito.<List<Artist>>any(), Mockito.<List<Genre>>any()), times(1));
+//                verify(albumRepository, times(1)).save(any(Album.class));
+//                resUtilities.verify(() -> AlbumResponseMapper.toDTO(any(Album.class)), times(1));
+//
+//                assertNotNull(createdAlbum);
+//                assertEquals(tef.currentAlbumId.get(), createdAlbum.id());
+//                assertEquals("Renaissance", createdAlbum.title());
+//                assertEquals(1, createdAlbum.artists().size());
+//                assertTrue(createdAlbum.artists().stream()
+//                        .map(flattenedArtistDTO -> flattenedArtistDTO.id())
+//                        .toList().contains(tef.beyonce.getId())
+//                );
+//                assertEquals(3, createdAlbum.genres().size());
+//                assertTrue(createdAlbum.genres().stream()
+//                        .map(flattenedGenreDTO -> flattenedGenreDTO.id())
+//                        .toList().containsAll(List.of(tef.dancePop.getId(), tef.electronic.getId(), tef.world.getId())));
+//                assertEquals(3600, createdAlbum.durationInSeconds());
+//                assertNull(createdAlbum.imageUrl());
+//                assertNull(createdAlbum.releaseYear());
+//                assertEquals(Format.CD, createdAlbum.format());
+//                assertNull(createdAlbum.publisher());
+//                assertEquals(1799, createdAlbum.priceInPences());
+//                assertEquals(Currency.GBP, createdAlbum.currency());
+//
+//            }
+//        }
 
         @Test
         void createAlbum_ShouldReturnCreatedAlbum_WhenImageUrlIsValid() {
