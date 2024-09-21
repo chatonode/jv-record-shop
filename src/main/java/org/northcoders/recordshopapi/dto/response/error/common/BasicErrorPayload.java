@@ -10,7 +10,7 @@ import org.northcoders.recordshopapi.dto.response.error.ErrorPayload;
 @Getter
 public class BasicErrorPayload extends ErrorPayload<String> {
 
-    public BasicErrorPayload(Exception exception, String detailedMessage) {
-        super(exception.getMessage(), detailedMessage);
+    public BasicErrorPayload(Exception exception, String message) {
+        super(message, exception.getMessage());
     }
 }
