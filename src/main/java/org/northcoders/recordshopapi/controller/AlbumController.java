@@ -26,7 +26,7 @@ public class AlbumController {
     AlbumService albumService;
 
     @GetMapping
-    public ResponseEntity<SuccessPayload> getAlbums(
+    public ResponseEntity<SuccessPayload<List<AlbumResponseDTO>>> getAlbums(
             @RequestParam(required = false, name = "year") Integer releaseYear,
             @RequestParam(required = false, name = "title") String title,
             @RequestParam(required = false, name = "genre") GenreType genreType,
@@ -54,43 +54,43 @@ public class AlbumController {
             albums.addAll(allAlbums);
         }
 
-        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Fetched, Album.class, albums);
+        SuccessPayload<List<AlbumResponseDTO>> successPayload = new SuccessPayload<>(SuccessResultType.Fetched, Album.class, albums);
 
         return new ResponseEntity<>(successPayload, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessPayload> getAlbumById(@PathVariable String id) {
+    public ResponseEntity<SuccessPayload<AlbumResponseDTO>> getAlbumById(@PathVariable String id) {
         AlbumResponseDTO album = albumService.getAlbumById(Long.parseLong(id));
 
-        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Fetched, Album.class, album);
+        SuccessPayload<AlbumResponseDTO> successPayload = new SuccessPayload<>(SuccessResultType.Fetched, Album.class, album);
 
         return new ResponseEntity<>(successPayload, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<SuccessPayload> createAlbum(@RequestBody @Validated AlbumCreateDTO albumCreateDTO) {
+    public ResponseEntity<SuccessPayload<AlbumResponseDTO>> createAlbum(@RequestBody @Validated AlbumCreateDTO albumCreateDTO) {
         AlbumResponseDTO createdAlbum = albumService.createAlbum(albumCreateDTO);
 
-        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Created, Album.class, createdAlbum);
+        SuccessPayload<AlbumResponseDTO> successPayload = new SuccessPayload<>(SuccessResultType.Created, Album.class, createdAlbum);
 
         return new ResponseEntity<>(successPayload, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SuccessPayload> replaceAlbum(@PathVariable String id, @Validated @RequestBody AlbumUpdateDTO albumUpdateDTO) {
+    public ResponseEntity<SuccessPayload<AlbumResponseDTO>> replaceAlbum(@PathVariable String id, @Validated @RequestBody AlbumUpdateDTO albumUpdateDTO) {
         AlbumResponseDTO replacedAlbum = albumService.updateAlbum(Long.parseLong(id), albumUpdateDTO);
 
-        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Updated, Album.class, replacedAlbum);
+        SuccessPayload<AlbumResponseDTO> successPayload = new SuccessPayload<>(SuccessResultType.Updated, Album.class, replacedAlbum);
 
         return new ResponseEntity<>(successPayload, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<SuccessPayload> deleteAlbum(@PathVariable String id) {
+    public ResponseEntity<SuccessPayload<String>> deleteAlbum(@PathVariable String id) {
         albumService.deleteAlbumById(Long.parseLong(id));
 
-        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Deleted, Album.class, id);
+        SuccessPayload<String> successPayload = new SuccessPayload<>(SuccessResultType.Deleted, Album.class, id);
 
         return new ResponseEntity<>(successPayload, HttpStatus.OK);
     }

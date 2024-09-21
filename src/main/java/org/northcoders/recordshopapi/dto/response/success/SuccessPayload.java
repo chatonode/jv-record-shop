@@ -8,17 +8,17 @@ import org.northcoders.recordshopapi.dto.response.enums.PayloadStatus;
 import org.northcoders.recordshopapi.dto.response.enums.SuccessResultType;
 
 @Getter
-public class SuccessPayload extends Payload {
+public class SuccessPayload<T> extends Payload {
     @JsonIgnore
     private final SuccessResultType type;
 
     @JsonIgnore
     private final Class<?> entityClass;
 
-    private final Object data;
+    private final T data;
 
     @Builder
-    public SuccessPayload(SuccessResultType successResultType, Class<?> entityClass, Object data) {
+    public SuccessPayload(SuccessResultType successResultType, Class<?> entityClass, T data) {
         super(PayloadStatus.SUCCESS, "%s: %s".formatted(successResultType.name(), entityClass.getSimpleName()));
         this.type = successResultType;
         this.entityClass = entityClass;

@@ -23,7 +23,7 @@ public class ArtistController {
     ArtistService artistService;
 
     @GetMapping
-    public ResponseEntity<SuccessPayload> getArtists(
+    public ResponseEntity<SuccessPayload<List<ArtistResponseDTO>>> getArtists(
             @RequestParam(required = false, name = "name") String name
     ) {
         List<ArtistResponseDTO> artists = new ArrayList<>();
@@ -37,34 +37,34 @@ public class ArtistController {
             artists.addAll(allArtists);
         }
 
-        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Fetched, Artist.class, artists);
+        SuccessPayload<List<ArtistResponseDTO>> successPayload = new SuccessPayload<>(SuccessResultType.Fetched, Artist.class, artists);
 
         return new ResponseEntity<>(successPayload, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessPayload> getArtistById(@PathVariable String id) {
+    public ResponseEntity<SuccessPayload<ArtistResponseDTO>> getArtistById(@PathVariable String id) {
         ArtistResponseDTO artist = artistService.getArtistById(Long.parseLong(id));
 
-        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Fetched, Artist.class, artist);
+        SuccessPayload<ArtistResponseDTO> successPayload = new SuccessPayload<>(SuccessResultType.Fetched, Artist.class, artist);
 
         return new ResponseEntity<>(successPayload, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<SuccessPayload> createArtist(@RequestBody @Validated ArtistCreateDTO artistCreateDTO) {
+    public ResponseEntity<SuccessPayload<ArtistResponseDTO>> createArtist(@RequestBody @Validated ArtistCreateDTO artistCreateDTO) {
         ArtistResponseDTO createdArtist = artistService.createArtist(artistCreateDTO);
 
-        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Created, Artist.class, createdArtist);
+        SuccessPayload<ArtistResponseDTO> successPayload = new SuccessPayload<>(SuccessResultType.Created, Artist.class, createdArtist);
 
         return new ResponseEntity<>(successPayload, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<SuccessPayload> deleteArtist(@PathVariable String id) {
+    public ResponseEntity<SuccessPayload<String>> deleteArtist(@PathVariable String id) {
         artistService.deleteArtistById(Long.parseLong(id));
 
-        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Deleted, Artist.class, id);
+        SuccessPayload<String> successPayload = new SuccessPayload<>(SuccessResultType.Deleted, Artist.class, id);
 
         return new ResponseEntity<>(successPayload, HttpStatus.OK);
     }
