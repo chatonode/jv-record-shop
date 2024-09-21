@@ -1,16 +1,13 @@
 package org.northcoders.recordshopapi.dto.request.album;
 
-import java.util.List;
-
 import lombok.*;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.URL;
-
 import org.northcoders.recordshopapi.model.*;
 import org.northcoders.recordshopapi.validation.constraints.NullOrNotBlank;
+import org.northcoders.recordshopapi.validation.constraints.NullOrNotEmpty;
+
+import java.util.List;
 
 @Data
 @Getter
@@ -18,41 +15,36 @@ import org.northcoders.recordshopapi.validation.constraints.NullOrNotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AlbumCreateDTO {
+public class AlbumUpdateDTO {
 
-    @NotBlank(message = "Album title is required")
+    @NullOrNotBlank(message = "If provided, title is required")
     private String title;
 
-    @NotEmpty(message = "At least one artist id is required")
+    @NullOrNotEmpty(message = "If provided, at least one artist id is required")
     private List<Long> artistIds;
 
-    @NotEmpty(message = "At least one genre id is required")
+    @NullOrNotEmpty(message = "If provided, at least one genre id is required")
     private List<Long> genreIds;
 
-    @NotNull(message = "Duration is required")
     @Min(value = 30, message = "Duration must be at least 30 seconds")
     private Integer durationInSeconds;
 
     @URL(message = "Invalid image URL")
     private String imageUrl;
 
-    @Min(value = 1900, message = "Invalid release year")  // Can be used without @NotNull if release year is allowed to be null
+    @Min(value = 1900, message = "Invalid release year")
     private Integer releaseYear;
 
     @NullOrNotBlank(message = "If provided, publisher is required")
     private String publisher;
 
-    @NotNull(message = "Format is required")
     private Format format;
 
-    @NotNull(message = "Price is required")
     @Min(value = 1, message = "Price must be at least 1 pence")
     private Integer priceInPences;
 
-    @NotNull(message = "Currency is required")
     private Currency currency;
 
-//    @NotNull(message = "Stock quantity is required")
-//    @Min(value = 0, message = "Quantity in stock cannot be negative")
-//    private Integer quantityInStock;
+    @Min(value = 0, message = "Quantity must be at least 0")
+    private Integer quantityInStock;
 }

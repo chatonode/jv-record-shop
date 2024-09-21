@@ -1,9 +1,11 @@
 package org.northcoders.recordshopapi.service;
 
 import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
+import org.northcoders.recordshopapi.dto.request.album.AlbumUpdateDTO;
 import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
 import org.northcoders.recordshopapi.exception.service.InvalidParameterException;
 import org.northcoders.recordshopapi.exception.service.NotFoundException;
+import org.northcoders.recordshopapi.mapper.request.album.AlbumUpdateMapper;
 import org.northcoders.recordshopapi.mapper.response.AlbumResponseMapper;
 import org.northcoders.recordshopapi.model.*;
 import org.northcoders.recordshopapi.repository.AlbumRepository;
@@ -34,6 +36,10 @@ public class AlbumServiceImpl implements AlbumService {
 
         albumRepository.findAll().forEach(albums::add);
 
+        if (albums.isEmpty()) {
+            return List.of();
+        }
+
         List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
 
         return albumResponseDTOs;
@@ -43,6 +49,10 @@ public class AlbumServiceImpl implements AlbumService {
     public List<AlbumResponseDTO> getAlbumsByReleaseYear(Integer releaseYear) {
         List<Album> albums = albumRepository.findAllByReleaseYear(releaseYear);
 
+        if (albums.isEmpty()) {
+            return List.of();
+        }
+
         List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
 
         return albumResponseDTOs;
@@ -51,6 +61,10 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public List<AlbumResponseDTO> getAlbumsByTitle(String title) {
         List<Album> albums = albumRepository.findAllByTitle(title);
+
+        if (albums.isEmpty()) {
+            return List.of();
+        }
 
         List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
 
@@ -63,6 +77,9 @@ public class AlbumServiceImpl implements AlbumService {
 
         List<Album> albums = albumRepository.findAllByGenreSet(Set.of(foundGenre));
 
+        if (albums.isEmpty()) {
+            return List.of();
+        }
 
         List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
 
@@ -72,6 +89,10 @@ public class AlbumServiceImpl implements AlbumService {
     @Override
     public List<AlbumResponseDTO> getAlbumsByFormat(Format format) {
         List<Album> albums = albumRepository.findAllByFormat(format);
+
+        if (albums.isEmpty()) {
+            return List.of();
+        }
 
         List<AlbumResponseDTO> albumResponseDTOs = albums.stream().map(AlbumResponseMapper::toDTO).toList();
 
@@ -86,7 +107,6 @@ public class AlbumServiceImpl implements AlbumService {
 
         return albumResponseDTO;
     }
-
 
     public AlbumResponseDTO createAlbum(AlbumCreateDTO albumCreateDTO) {
         List<Artist> artists = albumCreateDTO.getArtistIds().stream()
@@ -107,57 +127,27 @@ public class AlbumServiceImpl implements AlbumService {
     }
 
     @Override
-    public AlbumResponseDTO replaceAlbum(Long id, Album album) {
+    public AlbumResponseDTO updateAlbum(Long id, AlbumUpdateDTO albumUpdateDTO) {
         Album foundAlbum = albumRepository.findById(id).orElseThrow(() -> new NotFoundException(Album.class));
 
-        if (album.getId() != null) {
-            throw new InvalidParameterException(Album.class, "id");
+        List<Artist> artists = new ArrayList<>();
+        List<Genre> genres = new ArrayList<>();
+
+        if (albumUpdateDTO.getArtistIds() != null) {
+            albumUpdateDTO.getArtistIds().stream()
+                    .map(artistId -> artistRepository.findById(artistId).orElseThrow(() -> new NotFoundException(Artist.class)))
+                    .forEach(artists::add);
         }
 
-        if (album.getTitle() != null) {
-            foundAlbum.setTitle(album.getTitle());
+        if (albumUpdateDTO.getGenreIds() != null) {
+            albumUpdateDTO.getGenreIds().stream()
+                    .map(genreId -> genreRepository.findById(genreId).orElseThrow(() -> new NotFoundException(Genre.class)))
+                    .forEach(genres::add);
         }
 
-        if (album.getArtistSet() != null) {
-            foundAlbum.setArtistSet(album.getArtistSet());
-        }
+        Album album = AlbumUpdateMapper.toEntity(foundAlbum, albumUpdateDTO, artists, genres);
 
-        if (album.getGenreSet() != null) {
-            foundAlbum.setGenreSet(album.getGenreSet());
-        }
-
-        if (album.getDurationInSeconds() != null) {
-            foundAlbum.setDurationInSeconds(album.getDurationInSeconds());
-        }
-
-        if (album.getReleaseYear() != null) {
-            foundAlbum.setReleaseYear(album.getReleaseYear());
-        }
-
-        if (album.getPublisher() != null) {
-            foundAlbum.setPublisher(album.getPublisher());
-        }
-
-        if (album.getPriceInPences() != null) {
-            foundAlbum.setPriceInPences(album.getPriceInPences());
-        }
-
-
-        if (album.getCurrency() != null) {
-            foundAlbum.setCurrency(album.getCurrency());
-        }
-
-
-        if (album.getQuantityInStock() != null) {
-            foundAlbum.setQuantityInStock(album.getQuantityInStock());
-        }
-
-
-        if (album.getFormat() != null) {
-            foundAlbum.setFormat(album.getFormat());
-        }
-
-        Album updatedAlbum = albumRepository.save(foundAlbum);
+        Album updatedAlbum = albumRepository.save(album);
 
         AlbumResponseDTO albumResponseDTO = AlbumResponseMapper.toDTO(updatedAlbum);
 

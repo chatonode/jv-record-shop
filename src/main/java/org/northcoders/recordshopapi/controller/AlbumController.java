@@ -1,6 +1,7 @@
 package org.northcoders.recordshopapi.controller;
 
 import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
+import org.northcoders.recordshopapi.dto.request.album.AlbumUpdateDTO;
 import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
 import org.northcoders.recordshopapi.model.Album;
 import org.northcoders.recordshopapi.model.Format;
@@ -77,8 +78,8 @@ public class AlbumController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SuccessPayload> replaceAlbum(@PathVariable String id, @RequestBody Album album) {
-        AlbumResponseDTO replacedAlbum = albumService.replaceAlbum(Long.parseLong(id), album);
+    public ResponseEntity<SuccessPayload> replaceAlbum(@PathVariable String id, @Validated @RequestBody AlbumUpdateDTO albumUpdateDTO) {
+        AlbumResponseDTO replacedAlbum = albumService.updateAlbum(Long.parseLong(id), albumUpdateDTO);
 
         SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Updated, Album.class, replacedAlbum);
 
