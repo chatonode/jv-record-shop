@@ -25,40 +25,40 @@ public class GenreController {
     GenreService genreService;
 
     @GetMapping
-    public ResponseEntity<SuccessPayload> getGenres() {
+    public ResponseEntity<SuccessPayload<List<GenreResponseDTO>>> getGenres() {
         List<GenreResponseDTO> genres = new ArrayList<>();
 
         List<GenreResponseDTO> allGenres = genreService.getAllGenres();
         genres.addAll(allGenres);
 
-        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Fetched, Genre.class, genres);
+        SuccessPayload<List<GenreResponseDTO>> successPayload = new SuccessPayload<>(SuccessResultType.Fetched, Genre.class, genres);
 
         return new ResponseEntity<>(successPayload, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessPayload> getGenreById(@PathVariable String id) {
+    public ResponseEntity<SuccessPayload<GenreResponseDTO>> getGenreById(@PathVariable String id) {
         GenreResponseDTO genre = genreService.getGenreById(Long.parseLong(id));
 
-        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Fetched, Genre.class, genre);
+        SuccessPayload<GenreResponseDTO> successPayload = new SuccessPayload<>(SuccessResultType.Fetched, Genre.class, genre);
 
         return new ResponseEntity<>(successPayload, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<SuccessPayload> createGenre(@RequestBody @Validated GenreCreateDTO genreCreateDTO) {
+    public ResponseEntity<SuccessPayload<GenreResponseDTO>> createGenre(@RequestBody @Validated GenreCreateDTO genreCreateDTO) {
         GenreResponseDTO createdGenre = genreService.createGenre(genreCreateDTO);
 
-        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Created, Genre.class, createdGenre);
+        SuccessPayload<GenreResponseDTO> successPayload = new SuccessPayload<>(SuccessResultType.Created, Genre.class, createdGenre);
 
         return new ResponseEntity<>(successPayload, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<SuccessPayload> deleteGenre(@PathVariable String id) {
+    public ResponseEntity<SuccessPayload<String>> deleteGenre(@PathVariable String id) {
         genreService.deleteGenreById(Long.parseLong(id));
 
-        SuccessPayload successPayload = new SuccessPayload(SuccessResultType.Deleted, Genre.class, id);
+        SuccessPayload<String> successPayload = new SuccessPayload<>(SuccessResultType.Deleted, Genre.class, id);
 
         return new ResponseEntity<>(successPayload, HttpStatus.OK);
     }
