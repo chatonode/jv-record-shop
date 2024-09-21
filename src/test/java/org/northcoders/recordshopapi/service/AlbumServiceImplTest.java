@@ -1,7 +1,6 @@
 package org.northcoders.recordshopapi.service;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Nested;
@@ -9,10 +8,9 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
 import org.northcoders.recordshopapi.dto.request.album.AlbumUpdateDTO;
-import org.northcoders.recordshopapi.dto.request.artist.ArtistCreateDTO;
-import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
-import org.northcoders.recordshopapi.dto.response.album.FlattenedArtistDTO;
-import org.northcoders.recordshopapi.dto.response.album.FlattenedGenreDTO;
+import org.northcoders.recordshopapi.dto.response.success.album.AlbumResponseDTO;
+import org.northcoders.recordshopapi.dto.response.success.album.FlattenedArtistDTO;
+import org.northcoders.recordshopapi.dto.response.success.album.FlattenedGenreDTO;
 import org.northcoders.recordshopapi.mapper.request.album.AlbumUpdateMapper;
 import org.northcoders.recordshopapi.mapper.response.AlbumResponseMapper;
 import org.northcoders.recordshopapi.model.Currency;

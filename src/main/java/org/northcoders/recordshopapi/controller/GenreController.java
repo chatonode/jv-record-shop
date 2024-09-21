@@ -2,9 +2,9 @@ package org.northcoders.recordshopapi.controller;
 
 
 import org.northcoders.recordshopapi.dto.request.genre.GenreCreateDTO;
-import org.northcoders.recordshopapi.dto.response.SuccessPayload;
-import org.northcoders.recordshopapi.dto.response.SuccessResultType;
-import org.northcoders.recordshopapi.dto.response.genre.GenreResponseDTO;
+import org.northcoders.recordshopapi.dto.response.success.SuccessPayload;
+import org.northcoders.recordshopapi.dto.response.enums.SuccessResultType;
+import org.northcoders.recordshopapi.dto.response.success.genre.GenreResponseDTO;
 
 import org.northcoders.recordshopapi.model.Genre;
 import org.northcoders.recordshopapi.service.GenreService;

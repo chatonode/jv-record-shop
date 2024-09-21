@@ -2,7 +2,7 @@ package org.northcoders.recordshopapi.service;
 
 
 import org.northcoders.recordshopapi.dto.request.artist.ArtistCreateDTO;
-import org.northcoders.recordshopapi.dto.response.artist.ArtistResponseDTO;
+import org.northcoders.recordshopapi.dto.response.success.artist.ArtistResponseDTO;
 import org.northcoders.recordshopapi.exception.service.NotFoundException;
 import org.northcoders.recordshopapi.mapper.request.artist.ArtistCreateMapper;
 import org.northcoders.recordshopapi.mapper.response.ArtistResponseMapper;

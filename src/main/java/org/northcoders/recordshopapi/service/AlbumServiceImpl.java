@@ -2,8 +2,7 @@ package org.northcoders.recordshopapi.service;
 
 import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
 import org.northcoders.recordshopapi.dto.request.album.AlbumUpdateDTO;
-import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
-import org.northcoders.recordshopapi.exception.service.InvalidParameterException;
+import org.northcoders.recordshopapi.dto.response.success.album.AlbumResponseDTO;
 import org.northcoders.recordshopapi.exception.service.NotFoundException;
 import org.northcoders.recordshopapi.mapper.request.album.AlbumUpdateMapper;
 import org.northcoders.recordshopapi.mapper.response.AlbumResponseMapper;

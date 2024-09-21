@@ -1,4 +1,4 @@
-package org.northcoders.recordshopapi.dto.response.artist;
+package org.northcoders.recordshopapi.dto.response.success.artist;
 
 import lombok.*;
 

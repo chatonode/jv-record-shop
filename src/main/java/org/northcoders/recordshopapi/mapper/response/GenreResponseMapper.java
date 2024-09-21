@@ -1,9 +1,8 @@
 package org.northcoders.recordshopapi.mapper.response;
 
-import org.northcoders.recordshopapi.dto.response.genre.FlattenedAlbumDTO;
-import org.northcoders.recordshopapi.dto.response.genre.GenreResponseDTO;
+import org.northcoders.recordshopapi.dto.response.success.genre.FlattenedAlbumDTO;
+import org.northcoders.recordshopapi.dto.response.success.genre.GenreResponseDTO;
 import org.northcoders.recordshopapi.model.Genre;
-import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 

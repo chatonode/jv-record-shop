@@ -2,12 +2,12 @@ package org.northcoders.recordshopapi.controller;
 
 import org.northcoders.recordshopapi.dto.request.album.AlbumCreateDTO;
 import org.northcoders.recordshopapi.dto.request.album.AlbumUpdateDTO;
-import org.northcoders.recordshopapi.dto.response.album.AlbumResponseDTO;
+import org.northcoders.recordshopapi.dto.response.success.album.AlbumResponseDTO;
 import org.northcoders.recordshopapi.model.Album;
 import org.northcoders.recordshopapi.model.Format;
 import org.northcoders.recordshopapi.model.GenreType;
-import org.northcoders.recordshopapi.dto.response.SuccessResultType;
-import org.northcoders.recordshopapi.dto.response.SuccessPayload;
+import org.northcoders.recordshopapi.dto.response.enums.SuccessResultType;
+import org.northcoders.recordshopapi.dto.response.success.SuccessPayload;
 import org.northcoders.recordshopapi.service.AlbumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -1,14 +1,15 @@
-package org.northcoders.recordshopapi.dto.response.artist;
+package org.northcoders.recordshopapi.dto.response.success.genre;
 
 import lombok.Builder;
+import org.northcoders.recordshopapi.model.GenreType;
 
 import java.util.Date;
 import java.util.List;
 
 @Builder
-public record ArtistResponseDTO(
+public record GenreResponseDTO(
         Long id,
-        String fullName,
+        GenreType name,
         List<FlattenedAlbumDTO> albums,
         Date createdDate,
         Date updatedDate

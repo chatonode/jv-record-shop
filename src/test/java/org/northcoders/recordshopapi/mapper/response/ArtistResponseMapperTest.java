@@ -3,7 +3,7 @@ package org.northcoders.recordshopapi.mapper.response;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
-import org.northcoders.recordshopapi.dto.response.artist.ArtistResponseDTO;
+import org.northcoders.recordshopapi.dto.response.success.artist.ArtistResponseDTO;
 import org.northcoders.recordshopapi.model.*;
 
 import java.util.Date;

@@ -1,9 +1,7 @@
 package org.northcoders.recordshopapi.service;
 
-import org.northcoders.recordshopapi.dto.request.artist.ArtistCreateDTO;
 import org.northcoders.recordshopapi.dto.request.genre.GenreCreateDTO;
-import org.northcoders.recordshopapi.dto.response.artist.ArtistResponseDTO;
-import org.northcoders.recordshopapi.dto.response.genre.GenreResponseDTO;
+import org.northcoders.recordshopapi.dto.response.success.genre.GenreResponseDTO;
 
 import java.util.List;
 

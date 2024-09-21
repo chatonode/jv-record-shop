@@ -1,8 +1,7 @@
 package org.northcoders.recordshopapi.mapper.response;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.northcoders.recordshopapi.dto.response.genre.GenreResponseDTO;
+import org.northcoders.recordshopapi.dto.response.success.genre.GenreResponseDTO;
 import org.northcoders.recordshopapi.model.*;
 
 import java.util.Date;
